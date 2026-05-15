@@ -17,14 +17,15 @@ gCanvas::~gCanvas() {
 }
 
 void gCanvas::setup() {
-	logo.loadImage("glistengine_logo.png");
+	merhaba = "merhaba";
 }
 
 void gCanvas::update() {
 }
 
 void gCanvas::draw() {
-	logo.draw((getWidth() - logo.getWidth()) / 2, (getHeight() - logo.getHeight()) / 2);
+	setColor(255, 255, 255);
+	root->titlefont.drawText(merhaba, getWidth() / 2, getHeight() / 2);
 }
 
 void gCanvas::keyPressed(int key) {

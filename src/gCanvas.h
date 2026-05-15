@@ -39,7 +39,7 @@ public:
 
 private:
 	gApp* root;
-	gImage logo;
+	std::string merhaba;
 };
 
 #endif /* GCANVAS_H_ */
