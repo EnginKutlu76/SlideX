@@ -8,7 +8,8 @@
 #include <MainMenuCanvas.h>
 #include "gCanvas.h"
 #include "CreditsMenu.h"
-#include "Help.h"
+#include "ContactCanvas.h"
+#include "Options.h"
 
 MainMenuCanvas::MainMenuCanvas(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
@@ -23,7 +24,7 @@ void MainMenuCanvas::setup() {
 	logoSetup();
 	startSetup();
 	optionSetup();
-	helpSetup();
+	contactSetup();
 	creditSetup();
 	colorSetup();
 }
@@ -36,7 +37,7 @@ void MainMenuCanvas::draw() {
 	logoDraw();
 	startDraw();
 	optionDraw();
-	helpDraw();
+	contactDraw();
 	creditDraw();
 	//fadeEffectDraw();
 }
@@ -135,22 +136,22 @@ void MainMenuCanvas::optionSetup() {
 	optionstate = BUTTON_NONE;
 }
 
-void MainMenuCanvas::helpSetup() {
-	helptext = root->localizeWord(root->helpkey);
-	helpw = root->titlefont.getStringWidth(helptext);
-	helph = root->titlefont.getStringHeight(helptext);
-	helpx = optionx + (optionw - helpw) / 2;
-	helpy = optiony + (helph + 60);
-	helphitbox.set(helpx, helpy - helph, helpx + helpw, helpy);
-	helpstate = BUTTON_NONE;
+void MainMenuCanvas::contactSetup() {
+	contacttext = root->localizeWord(root->contactkey);
+	contactw = root->titlefont.getStringWidth(contacttext);
+	contacth = root->titlefont.getStringHeight(contacttext);
+	contactx = optionx + (optionw - contactw) / 2;
+	contacty = optiony + (contacth + 60);
+	contacthitbox.set(contactx, contacty - contacth, contactx + contactw, contacty);
+	contactstate = BUTTON_NONE;
 }
 
 void MainMenuCanvas::creditSetup() {
 	credittext = root->localizeWord(root->creditskey);
 	creditw = root->titlefont.getStringWidth(credittext);
 	credith = root->titlefont.getStringHeight(credittext);
-	creditx = helpx + (helpw - creditw) / 2;
-	credity = helpy + (credith + 60);
+	creditx = contactx + (contactw - creditw) / 2;
+	credity = contacty + (credith + 60);
 	credithitbox.set(creditx, credity - credith, creditx + creditw, credity);
 	creditstate = BUTTON_NONE;
 }
@@ -187,10 +188,10 @@ void MainMenuCanvas::optionDraw() {
 	setColor(normalcolor);
 }
 
-void MainMenuCanvas::helpDraw() {
-	if(helpstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(helpstate == BUTTON_PRESSED) setColor(pressedcolor);
-	root->titlefont.drawText(helptext, helpx, helpy);
+void MainMenuCanvas::contactDraw() {
+	if(contactstate == BUTTON_FOCUS) setColor(focuscolor);
+	if(contactstate == BUTTON_PRESSED) setColor(pressedcolor);
+	root->titlefont.drawText(contacttext, contactx, contacty);
 	setColor(normalcolor);
 }
 
@@ -233,12 +234,12 @@ void MainMenuCanvas::updateButtonState(int x, int y) {
 		}
 	}
 
-    if(helpstate != BUTTON_PRESSED) {
-        if(helphitbox.contains(x, y)) {
-            helpstate = BUTTON_FOCUS;
+    if(contactstate != BUTTON_PRESSED) {
+        if(contacthitbox.contains(x, y)) {
+            contactstate = BUTTON_FOCUS;
         }
         else {
-            helpstate = BUTTON_NONE;
+            contactstate = BUTTON_NONE;
         }
     }
 }
@@ -259,9 +260,9 @@ void MainMenuCanvas::checkButtonPressed(int x, int y, int button) {
 		credity += 2;
 	}
 
-	if(helphitbox.contains(x, y)) {
-		helpstate = BUTTON_PRESSED;
-		helpy += 2;
+	if(contacthitbox.contains(x, y)) {
+		contactstate = BUTTON_PRESSED;
+		contacty += 2;
 	}
 }
 
@@ -273,23 +274,23 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 		root->setCurrentCanvas(new gCanvas(root));
 	}
 
-/*	else if(optionhitbox.contains(x, y) && optionstate == BUTTON_PRESSED) {
+	else if(optionhitbox.contains(x, y) && optionstate == BUTTON_PRESSED) {
 		optionstate = BUTTON_PERFORMED;
 		optiony -=2;
-		root->setCurrentCanvas(new OptionsCanvas(root));
+		root->setCurrentCanvas(new Options(root));
 	}
-*/
+
 	else if(credithitbox.contains(x, y) && creditstate == BUTTON_PRESSED) {
 		creditstate = BUTTON_PERFORMED;
 		credity -= 2;
 		root->setCurrentCanvas(new CreditsMenu(root));
 	}
 
-	else if(helphitbox.contains(x,y) && helpstate == BUTTON_PRESSED) {
-		helpstate = BUTTON_PERFORMED;
-		helpy -= 2;
-		if(helphitbox.contains(x, y)) {
-			root->setCurrentCanvas(new Help(root));
+	else if(contacthitbox.contains(x,y) && contactstate == BUTTON_PRESSED) {
+		contactstate = BUTTON_PERFORMED;
+		contacty -= 2;
+		if(contacthitbox.contains(x, y)) {
+			root->setCurrentCanvas(new ContactCanvas(root));
 		}
 	}
 
@@ -297,6 +298,6 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 		startstate = BUTTON_CANCELED;
 		//optionstate = BUTTON_CANCELED;
 		creditstate = BUTTON_CANCELED;
-		helpstate = BUTTON_CANCELED;
+		contactstate = BUTTON_CANCELED;
 	}
 }
