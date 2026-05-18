@@ -139,6 +139,8 @@ void Options::tabButtonReleased(int x, int y) {
 		applyGameSettings();
 		applyGraphicsSettings();
 		applyAudioSettings();
+		containerSetup();
+		tabSetup();
 	}
 
 	else if(resettabbutton.contains(x, y) && resettabbuttonstate == BUTTON_PRESSED) {
@@ -868,8 +870,6 @@ void Options::fxtickDraw() {
 void Options::applyGameSettings() {
 	root->saveGameSettings(selectedlanguage, isvsyncenabled, isfpsenabled);
 	root->applyGameSettings();
-	containerSetup();
-	tabSetup();
 }
 
 void Options::resetGameSettings() {
@@ -884,8 +884,6 @@ void Options::resetGameSettings() {
 void Options::applyGraphicsSettings() {
 	root->saveGraphicsSettings(selectedwindowmode);
 	root->applyGraphicsSettings();
-	containerSetup();
-	tabSetup();
 }
 
 void Options::resetGraphicsSettings() {
@@ -898,8 +896,6 @@ void Options::resetGraphicsSettings() {
 void Options::applyAudioSettings() {
 	root->saveAudioSettings(effectvalue, musicvalue, isfxenabled, ismusicenabled);
 	root->applyAudioSettings();
-	containerSetup();
-	tabSetup();
 }
 
 void Options::resetAudioSettings() {
