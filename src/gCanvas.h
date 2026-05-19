@@ -16,6 +16,7 @@
 #include "gLight.h"
 #include "gMaterial.h"
 #include "gTexture.h"
+#include "gShadowMap.h"
 
 
 class gCanvas : public gBaseCanvas {
@@ -49,12 +50,20 @@ private:
 	void moveCamera();
 
 	gApp* root;
-	gBox plane;
+	std::vector<gBox> plane;
+	gBox plane1;
 	gBox player;
 	gCamera cam;
 	gLight light;
 	gMaterial material;
 	gTexture diffusemap, specularmap;
+	gShadowMap shadow;
+	float velocityy;
+	float gravity;
+	bool isgrounded;
+
+	bool isjumping;
+	float jumprotation;
 };
 
 #endif /* GCANVAS_H_ */
