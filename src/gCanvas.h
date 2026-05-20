@@ -64,6 +64,7 @@ private:
 
 	bool isjumping;
 	float jumprotation;
+	float lastplanez;
 };
 
 #endif /* GCANVAS_H_ */

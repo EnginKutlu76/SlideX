@@ -8,7 +8,6 @@
 
 #include "gCanvas.h"
 
-
 gCanvas::gCanvas(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
 }
@@ -17,39 +16,58 @@ gCanvas::~gCanvas() {
 }
 
 void gCanvas::setup() {
-	plane.push_back(plane1);
-	plane.push_back(plane1);
-	plane[0].setScale(5, 1, 50);
-	plane[1].setScale(5, 1, 520);
 
-	plane[0].setPosition(
-		cam.getPosX(),
-		cam.getPosY(),
-		cam.getPosZ() - 5
-	);
-	player.setPosition(0, 2, 40);
-	cam.dolly(60.0f);
+	for(int i = 0; i < 8; i++) {
+		plane.push_back(plane1);
+	}
+
+	for(int i = 0; i < plane.size(); i++) {
+
+		plane[i].setScale(5, 1, 40);
+
+		plane[i].setPosition(
+			0,
+			0,
+			i * -81
+		);
+	}
+
+	lastplanez = plane.back().getPosZ();
+
+	player.setPosition(0, 2, 20);
+
 	cam.boom(10.0f);
+
 	keystate = KEY_NONE;
+
 	velocityy = 0.0f;
+
 	gravity = -0.015f;
+
 	isgrounded = false;
 
-	light.setSpecularColor(8, 8, 8);
-	light.setAmbientColor(40, 40, 40);
 	light.setDiffuseColor(255, 255, 245);
+
 	light.setPosition(0.0f, 50.0f, 20.0f);
 
 	shadow.allocate(&light, &cam, 4096, 4096);
 
-	shadow.setLightProjection(-20.0f, 20.0f, 20.0f, -20.0f, 0.01f, 60.0f);
+	shadow.setLightProjection(
+		-20.0f,
+		20.0f,
+		20.0f,
+		-20.0f,
+		0.01f,
+		60.0f
+	);
 
 	shadow.activate();
-
 }
 
 void gCanvas::update() {
+
 	moveCharacter();
+
 	velocityy += gravity;
 
 	player.setPosition(
@@ -59,6 +77,7 @@ void gCanvas::update() {
 	);
 
 	if(player.getPosY() <= 2.0f) {
+
 		player.setPosition(
 			player.getPosX(),
 			2.0f,
@@ -66,6 +85,7 @@ void gCanvas::update() {
 		);
 
 		velocityy = 0.0f;
+
 		isgrounded = true;
 	}
 	else {
@@ -73,13 +93,28 @@ void gCanvas::update() {
 	}
 
 	if(isjumping) {
-	    player.tilt(5.0f);
 
-	    jumprotation += 5.0f;
+		player.tilt(5.0f);
 
-	    if(jumprotation >= 90.0f) {
-	        isjumping = false;
-	    }
+		jumprotation += 5.0f;
+
+		if(jumprotation >= 90.0f) {
+			isjumping = false;
+		}
+	}
+
+	for(int i = 0; i < plane.size(); i++) {
+
+		if(plane[i].getPosZ() > player.getPosZ() + 40) {
+
+			lastplanez -= 81;
+
+			plane[i].setPosition(
+				plane[i].getPosX(),
+				plane[i].getPosY(),
+				lastplanez
+			);
+		}
 	}
 
 	cam.setPosition(
@@ -93,33 +128,45 @@ void gCanvas::update() {
 		player.getPosY(),
 		player.getPosZ()
 	));
+
+	light.setPosition(player.getPosX(), player.getPosY() + 200, player.getPosZ() + 30);
 }
 
 void gCanvas::draw() {
+
 	setColor(255, 255, 255);
-	shadow.enable();
+
 	cam.begin();
+
 	enableDepthTest();
+
 	light.enable();
-	plane[1].draw();
+
+	for(int i = 0; i < plane.size(); i++) {
+		plane[i].draw();
+	}
+
 	setColor(255, 0, 0);
+
 	player.draw();
+
 	light.disable();
+
 	disableDepthTest();
+
 	cam.end();
-	shadow.disable();
 }
 
 void gCanvas::moveCharacter() {
 
-    if(keystate & KEY_A) {
-    	player.pan(0.01f);
-    }
-    if(keystate & KEY_D) {
-    	player.pan(-0.01f);
-    }
+	if(keystate & KEY_A) {
+		player.pan(0.01f);
+	}
 
- }
+	if(keystate & KEY_D) {
+		player.pan(-0.01f);
+	}
+}
 
 void gCanvas::keyPressed(int key) {
 //	gLogi("gCanvas") << "keyPressed:" << key;
