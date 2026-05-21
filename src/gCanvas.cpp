@@ -16,6 +16,21 @@ gCanvas::~gCanvas() {
 }
 
 void gCanvas::setup() {
+	gamestate = GAMESTATE_PLAY;
+	resumepanelshown = false;
+	resumepanel.loadImage("dialogue_pause.png");
+	rpw = resumepanel.getWidth();
+	rph = resumepanel.getHeight();
+	rpx = (getWidth() - rpw) / 2.0f;
+	rpy = (getHeight() - rph) / 2.0f;
+
+	score = 0;
+	scorex = (getWidth() - root->textfont.getStringWidth(gToStr(score))) / 2;
+	scorey = root->textfont.getStringHeight(gToStr(score));
+
+	speed = -0.40f;
+	maxspeed = -3.0f;
+	acceleration = -0.0002f;
 
 	for(int i = 0; i < 8; i++) {
 		plane.push_back(plane1);
@@ -50,18 +65,12 @@ void gCanvas::setup() {
 
 	light.setPosition(0.0f, 50.0f, 20.0f);
 
-	shadow.allocate(&light, &cam, 4096, 4096);
-
-	shadow.setLightProjection(
-		-20.0f,
-		20.0f,
-		20.0f,
-		-20.0f,
-		0.01f,
-		60.0f
-	);
-
-	shadow.activate();
+	linestate = LINE_MID;
+	linelocation = 0;
+	isjumping = false;
+	fpsSetup();
+	lastPlayerZ = player.getPosZ();
+	scoreFloat = 0.0f;
 }
 
 void gCanvas::update() {
@@ -69,11 +78,12 @@ void gCanvas::update() {
 	moveCharacter();
 
 	velocityy += gravity;
+	if(speed > maxspeed) speed += acceleration;
 
 	player.setPosition(
-		player.getPosX(),
+		linelocation,
 		player.getPosY() + velocityy,
-		player.getPosZ() - 0.11f
+		player.getPosZ() + speed
 	);
 
 	if(player.getPosY() <= 2.0f) {
@@ -94,9 +104,9 @@ void gCanvas::update() {
 
 	if(isjumping) {
 
-		player.tilt(5.0f);
+		player.tilt(6.0f);
 
-		jumprotation += 5.0f;
+		jumprotation += 6.0f;
 
 		if(jumprotation >= 90.0f) {
 			isjumping = false;
@@ -130,6 +140,15 @@ void gCanvas::update() {
 	));
 
 	light.setPosition(player.getPosX(), player.getPosY() + 200, player.getPosZ() + 30);
+
+	float dz = lastPlayerZ - player.getPosZ();
+
+	if (dz > 0)
+	    scoreFloat += dz * 0.1f;
+
+	lastPlayerZ = player.getPosZ();
+
+	score = (int)scoreFloat;
 }
 
 void gCanvas::draw() {
@@ -146,6 +165,9 @@ void gCanvas::draw() {
 		plane[i].draw();
 	}
 
+	drawGui();
+//	if(resumepanelshown) return;
+
 	setColor(255, 0, 0);
 
 	player.draw();
@@ -153,18 +175,15 @@ void gCanvas::draw() {
 	light.disable();
 
 	disableDepthTest();
-
 	cam.end();
+
+	fpsDraw();
+	root->secondtextfont.drawText(gToStr(score), scorex, scorey + 10);
 }
 
 void gCanvas::moveCharacter() {
-
-	if(keystate & KEY_A) {
-		player.pan(0.01f);
-	}
-
-	if(keystate & KEY_D) {
-		player.pan(-0.01f);
+	if(keystate == KEY_ESC) {
+		gamestate = GAMESTATE_PAUSE;
 	}
 }
 
@@ -186,12 +205,78 @@ void gCanvas::keyPressed(int key) {
 		break;
 	case G_KEY_D:
 		pressedkey = KEY_D;
+		if(linestate == LINE_MID) {
+			linestate = LINE_RIGHT;
+			linelocation = 3;
+			gLogi("line") << "you in line right";
+		} else if (linestate == LINE_LEFT) {
+			linestate = LINE_MID;
+			linelocation = 0;
+			gLogi("line") << "you in line mid";
+		} else { gLogi("line") << "you already in line right"; }
 		break;
 	case G_KEY_A:
 		pressedkey = KEY_A;
+		if(linestate == LINE_MID) {
+			linestate = LINE_LEFT;
+			linelocation = -3;
+			gLogi("line") << "you in line left";
+		} else if (linestate == LINE_RIGHT) {
+			linestate = LINE_MID;
+			linelocation = 0;
+			gLogi("line") << "you in line mid";
+		} else { gLogi("line") << "you already in line left"; }
+		break;
+	case G_KEY_ESC:
+		pressedkey = KEY_ESC;
 		break;
 	}
 	keystate |= pressedkey;
+}
+
+void gCanvas::fpsSetup() {
+	fpscounterx = scorex + 20.0f;
+	fpscountery = scorey + 30.0f;
+}
+
+void gCanvas::fpsDraw() {
+	//if(root->getShowFps() == 1) {
+	char fpsBuffer[32];
+	sprintf(fpsBuffer, "%d FPS", root->getFramerate());
+	root->secondtextfont.drawText(fpsBuffer, fpscounterx, fpscountery);
+
+}
+void gCanvas::drawGui() {
+
+	if(gamestate == GAMESTATE_PAUSE) {
+		resumepanelshown = true;
+		resumepanel.draw(rpx, rpy);
+		setColor(0, 0, 0, 228);
+		root->textfont.drawText("SCORE", scorepanelx + 4, scorepanely + 4);
+		root->textfont.drawText(gToStr(score), scorepanelx + 6, scorepanely + 6);
+		setColor(212, 212, 212);
+		setColor(255, 255, 255);
+//		continuebutton.draw(leftbx, leftby);
+//		mainmbutton.draw(rightbx, rightby);
+	}
+
+/*	if(gamestate == GAMESTATE_PLAY) {
+		dialogueshown = false;
+	}
+
+	if(!dialogueshown) return;
+	if(gamestate == GAMESTATE_GAMEOVER) {
+		gui_gameoverdialogue.draw(dialoguex, dialoguey);
+		setColor(0, 0, 0, 228);
+		scoretitlefont.drawText("SCORE", scoretitlex + 4, scoretitley + 4);
+		scorefont.drawText(gToStr(score), scorex + 6, scorey + 6);
+		setColor(212, 212, 212);
+		scoretitlefont.drawText("SCORE", scoretitlex, scoretitley);
+		scorefont.drawText(gToStr(score), scorex, scorey);
+		setColor(255, 255, 255);
+		replaybutton.draw(leftbx, leftby);
+		mainmbutton.draw(rightbx, rightby);
+	}*/
 }
 
 void gCanvas::keyReleased(int key) {
@@ -221,6 +306,9 @@ void gCanvas::keyReleased(int key) {
 			break;
 		case G_KEY_X:
 			pressedkey = KEY_X;
+			break;
+		case G_KEY_ESC:
+			pressedkey = KEY_ESC;
 			break;
 		default:
 			break;

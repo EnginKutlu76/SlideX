@@ -44,10 +44,17 @@ public:
 	void hideNotify();
 
 private:
-	static const int KEY_NONE = 0, KEY_W = 1, KEY_S = 2, KEY_D = 4, KEY_A = 8, KEY_E = 16, KEY_R = 32, KEY_Z = 64, KEY_X = 128;
+	static const int KEY_NONE = 0, KEY_W = 1, KEY_S = 2, KEY_D = 4, KEY_A = 8, KEY_E = 16, KEY_R = 32, KEY_Z = 64, KEY_X = 128, KEY_ESC = 256;
+	static const int LINE_LEFT = 0, LINE_MID = 1, LINE_RIGHT = 2;
+	enum { GAMESTATE_LOAD, GAMESTATE_PLAY, GAMESTATE_GAMEOVER, GAMESTATE_PAUSE };
+	int gamestate;
 	int keystate;
+	int linestate;
 	void moveCharacter();
 	void moveCamera();
+	void fpsSetup();
+	void fpsDraw();
+	void drawGui();
 
 	gApp* root;
 	std::vector<gBox> plane;
@@ -65,6 +72,24 @@ private:
 	bool isjumping;
 	float jumprotation;
 	float lastplanez;
+	int linelocation;
+
+	float speed;
+	float maxspeed;
+	float acceleration;
+
+	int score;
+	int scorex, scorey;
+
+	int fpscounterx, fpscountery;
+
+	float lastPlayerZ;
+	float scoreFloat;
+
+	gImage resumepanel;
+	bool resumepanelshown;
+	int rpx, rpy, rpw, rph;
+	int scorepanelx, scorepanely;
 };
 
 #endif /* GCANVAS_H_ */
