@@ -17,6 +17,7 @@
 #include "gMaterial.h"
 #include "gTexture.h"
 #include "gShadowMap.h"
+#include "gRect.h"
 
 
 class gCanvas : public gBaseCanvas {
@@ -46,50 +47,102 @@ public:
 private:
 	static const int KEY_NONE = 0, KEY_W = 1, KEY_S = 2, KEY_D = 4, KEY_A = 8, KEY_E = 16, KEY_R = 32, KEY_Z = 64, KEY_X = 128, KEY_ESC = 256;
 	static const int LINE_LEFT = 0, LINE_MID = 1, LINE_RIGHT = 2;
+
 	enum { GAMESTATE_LOAD, GAMESTATE_PLAY, GAMESTATE_GAMEOVER, GAMESTATE_PAUSE };
+
+	struct ObstacleRow {
+		bool left1;
+		bool left2;
+		bool left3;
+		bool mid1;
+		bool mid2;
+		bool mid3;
+		bool right1;
+		bool right2;
+		bool right3;
+
+		float z;
+	};
+
+	void fpsSetup();
+	void guiSetup();
+	void obstacleSetup();
+	void scoreSetup();
+	void planeSetup();
+	void controlSetup();
+	void timingSetup();
+	void camSetup();
+	void camUpdate();
+	void planeUpdate();
+	void controlUpdate();
+	void timingUpdate();
+	void collision();
+	void fpsDraw();
+	void guiDraw();
+	void obstacleDraw();
+	void scoreDraw();
+	void planeDraw();
+	void enabling();
+	void disabling();
+
+	gApp* root;
+
+	//states
 	int gamestate;
 	int keystate;
 	int linestate;
-	void moveCharacter();
-	void moveCamera();
-	void fpsSetup();
-	void fpsDraw();
-	void drawGui();
 
-	gApp* root;
+	//plane
 	std::vector<gBox> plane;
 	gBox plane1;
+
 	gBox player;
 	gCamera cam;
 	gLight light;
-	gMaterial material;
-	gTexture diffusemap, specularmap;
-	gShadowMap shadow;
+
+	//controlling
 	float velocityy;
 	float gravity;
 	bool isgrounded;
-
 	bool isjumping;
 	float jumprotation;
+
 	float lastplanez;
+
 	int linelocation;
 
+	//speed
 	float speed;
 	float maxspeed;
 	float acceleration;
 
+	//score
 	int score;
 	int scorex, scorey;
+	float scoreFloat;
 
 	int fpscounterx, fpscountery;
 
-	float lastPlayerZ;
-	float scoreFloat;
+	float lastplayerz;
 
+	//gui
 	gImage resumepanel;
+	gImage mainmbutton;
+	gImage continuebutton;
 	bool resumepanelshown;
 	int rpx, rpy, rpw, rph;
 	int scorepanelx, scorepanely;
+	int leftbx, leftby, leftbw, leftbh;
+	int rightbx, rightby, rightbw, rightbh;
+	gRect hitbox;
+
+	//timing
+	float resumetimer;
+	bool isresuming;
+
+	//obstacle
+	gBox obstacle;
+	ObstacleRow currentrow;
 };
 
 #endif /* GCANVAS_H_ */
