@@ -9,7 +9,8 @@
 #include "gCanvas.h"
 #include "MainMenuCanvas.h"
 #include <ctime>
-
+#include <vector>
+#include <cstdlib>
 gCanvas::gCanvas(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
 }
@@ -53,6 +54,7 @@ void gCanvas::update() {
 	lastplayerz = player.getPosZ();
 
 	controlUpdate();
+	obstacleUpdate();
 	collision();
 	planeUpdate();
 	camUpdate();
@@ -87,13 +89,22 @@ void gCanvas::draw() {
 }
 
 void gCanvas::collision() {
-	float collisiondistancez = abs(player.getPosZ() - obstacle.getPosZ());
-	float collisiondistancex = abs(player.getPosX() - obstacle.getPosX());
+	int lane = 1;
+	if(player.getPosX() < -1.5f) lane = 0;
+	else if(player.getPosX() > 1.5f) lane = 2;
 
-	if(collisiondistancez < 3.0f && collisiondistancex < 1.0f) {
+	int layer = 0;
+	if(player.getPosY() > 5.0f) layer = 2;
+	else if(player.getPosY() > 3.0f) layer = 1;
 
-		if(player.getPosY() <= 3.0f) {
-			gamestate = GAMESTATE_PAUSE;
+	for(int i = 0; i < rows.size(); i++) {
+		float dz = abs(player.getPosZ() - rows[i].z);
+
+		if(dz < 3.0f) {
+			if(rows[i].cell[lane][layer]) {
+				gamestate = GAMESTATE_PAUSE;
+				return;
+			}
 		}
 	}
 }
@@ -149,6 +160,7 @@ void gCanvas::disabling() {
 }
 
 void gCanvas::controlSetup() {
+	player.setScale(0.1f, 0.1f, 0.1f);
 	player.setPosition(0, 2, 20);
 	lastplayerz = player.getPosZ();
 	speed = -0.40f;
@@ -271,66 +283,70 @@ void gCanvas::guiSetup() {
 }
 
 void gCanvas::obstacleSetup() {
-	obstacle.setPosition(0, 2, -90);
-	currentrow.left1 = true;
-	currentrow.left2 = true;
-	currentrow.left3 = true;
+	rows.clear();
 
-	currentrow.mid1 = true;
-	currentrow.mid2 = false;
-	currentrow.mid3 = true;
+	rowSpacing = 18.0f;
+	nextRowZ = -100.0f;
 
-	currentrow.right1 = false;
-	currentrow.right2 = true;
-	currentrow.right3 = true;
+	for(int i = 0; i < 20; i++) {
+		Row r;
+		r.z = nextRowZ;
+		nextRowZ -= rowSpacing;
 
-	currentrow.z = - 100;
+		for(int x = 0; x < 3; x++) {
+			for(int y = 0; y < 3; y++) {
+				r.cell[x][y] = true;
+			}
+		}
+
+		int holes = 1 + rand() % 2;
+
+		for(int h = 0; h < holes; h++) {
+			int x = rand() % 3;
+			int y = rand() % 3;
+			r.cell[x][y] = false;
+		}
+
+		rows.push_back(r);
+	}
 }
+void gCanvas::obstacleUpdate() {
+	for(int i = 0; i < rows.size(); i++) {
+		if(rows[i].z > player.getPosZ() + 40.0f) {
+			rows[i].z = nextRowZ;
+			nextRowZ -= rowSpacing;
 
+			for(int x = 0; x < 3; x++) {
+				for(int y = 0; y < 3; y++) {
+					rows[i].cell[x][y] = true;
+				}
+			}
+
+			int holes = 1 + rand() % 2;
+
+			for(int h = 0; h < holes; h++) {
+				int x = rand() % 3;
+				int y = rand() % 3;
+				rows[i].cell[x][y] = false;
+			}
+		}
+	}
+}
 void gCanvas::obstacleDraw() {
 	setColor(255, 0, 0);
-//	obstacle.draw();
-	if(currentrow.left1) {
-		obstacle.setPosition(-3, 2, currentrow.z);
-		obstacle.draw();
-	}
 
-	if(currentrow.mid1) {
-		obstacle.setPosition(0, 2, currentrow.z);
-		obstacle.draw();
-	}
+	for(int i = 0; i < rows.size(); i++) {
+		for(int x = 0; x < 3; x++) {
+			for(int y = 0; y < 3; y++) {
+				if(!rows[i].cell[x][y]) continue;
 
-	if(currentrow.right1) {
-		obstacle.setPosition(3, 2, currentrow.z);
-		obstacle.draw();
-	}
-	if(currentrow.left2) {
-		obstacle.setPosition(-3, 4, currentrow.z);
-		obstacle.draw();
-	}
+				float worldX = (x - 1) * 3.0f;
+				float worldY = 2.0f + (y * 2.0f);
 
-	if(currentrow.mid2) {
-		obstacle.setPosition(0, 4, currentrow.z);
-		obstacle.draw();
-	}
-
-	if(currentrow.right2) {
-		obstacle.setPosition(3, 4, currentrow.z);
-		obstacle.draw();
-	}
-	if(currentrow.left3) {
-		obstacle.setPosition(-3, 6, currentrow.z);
-		obstacle.draw();
-	}
-
-	if(currentrow.mid3) {
-		obstacle.setPosition(0, 6, currentrow.z);
-		obstacle.draw();
-	}
-
-	if(currentrow.right3) {
-		obstacle.setPosition(3, 6, currentrow.z);
-		obstacle.draw();
+				obstacle.setPosition(worldX, worldY, rows[i].z);
+				obstacle.draw();
+			}
+		}
 	}
 
 	setColor(255, 255, 255);

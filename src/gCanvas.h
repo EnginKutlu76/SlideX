@@ -49,7 +49,14 @@ private:
 	static const int LINE_LEFT = 0, LINE_MID = 1, LINE_RIGHT = 2;
 
 	enum { GAMESTATE_LOAD, GAMESTATE_PLAY, GAMESTATE_GAMEOVER, GAMESTATE_PAUSE };
+	struct Row {
+		bool cell[3][3];
+		float z;
+	};
 
+	std::vector<Row> rows;
+	float nextRowZ;
+	float rowSpacing;
 	struct ObstacleRow {
 		bool left1;
 		bool left2;
@@ -84,7 +91,7 @@ private:
 	void planeDraw();
 	void enabling();
 	void disabling();
-
+	void obstacleUpdate();
 	gApp* root;
 
 	//states
