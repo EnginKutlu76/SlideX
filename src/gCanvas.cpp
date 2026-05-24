@@ -11,6 +11,7 @@
 #include <ctime>
 #include <vector>
 #include <cstdlib>
+#include <cmath>
 gCanvas::gCanvas(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
 }
@@ -21,10 +22,15 @@ gCanvas::~gCanvas() {
 void gCanvas::setup() {
 	gamestate = GAMESTATE_PLAY;
 	keystate = KEY_NONE;
-	light.setDiffuseColor(255, 255, 245);
-	light.setPosition(0.0f, 50.0f, 20.0f);
+	light.setAmbientColor(170, 170, 170);
+	light.setDiffuseColor(220, 220, 220);
+	light.setSpecularColor(255, 255, 255);
+	light.setPosition(0.0f, 50.0f, 50.0f);
 	linestate = LINE_MID;
 	linelocation = 0;
+	color = glm::vec3(255, 0, 0);
+	targetColor = glm::vec3(255, 0, 0);
+	colorphase = 0.0f;
 	fpsSetup();
 	guiSetup();
 	obstacleSetup();
@@ -43,7 +49,7 @@ void gCanvas::update() {
 		return;
 	}
 
-	light.setPosition(player.getPosX(), player.getPosY() + 200, player.getPosZ() + 30);
+	light.setPosition(0.0f, 80.0f, player.getPosZ() + 20.0f);
 
 	float dz = lastplayerz - player.getPosZ();
 
@@ -58,6 +64,15 @@ void gCanvas::update() {
 	collision();
 	planeUpdate();
 	camUpdate();
+	colorphase += root->getAppManager()->getElapsedTime() * 2.5f;
+
+	targetColor = glm::vec3(
+	    127.5f + 127.5f * std::sin(colorphase),
+	    127.5f + 127.5f * std::sin(colorphase + 2.0943951f),
+	    127.5f + 127.5f * std::sin(colorphase + 4.1887902f)
+	);
+
+	color = glm::mix(color, targetColor, 0.02f);
 }
 
 void gCanvas::draw() {
@@ -65,7 +80,7 @@ void gCanvas::draw() {
 
 	planeDraw();
 	obstacleDraw();
-	setColor(0, 255, 0);
+	setColor((int)color.r, (int)color.g, (int)color.b);
 	player.draw();
 	setColor(255, 255, 255);
 	disabling();
@@ -102,7 +117,7 @@ void gCanvas::collision() {
 
 		if(dz < 3.0f) {
 			if(rows[i].cell[lane][layer]) {
-				gamestate = GAMESTATE_PAUSE;
+				//gamestate = GAMESTATE_PAUSE;
 				return;
 			}
 		}
@@ -160,11 +175,11 @@ void gCanvas::disabling() {
 }
 
 void gCanvas::controlSetup() {
-	player.setScale(0.1f, 0.1f, 0.1f);
+//	player.setScale(0.1f, 0.1f, 0.1f);
 	player.setPosition(0, 2, 20);
 	lastplayerz = player.getPosZ();
-	speed = -0.40f;
-	maxspeed = -3.0f;
+	speed = -0.60f;
+	maxspeed = -2.5f;
 	acceleration = -0.0002f;
 	velocityy = 0.0f;
 	gravity = -0.015f;
@@ -173,9 +188,13 @@ void gCanvas::controlSetup() {
 }
 
 void gCanvas::controlUpdate() {
-	velocityy += gravity;
-	if(speed > maxspeed) speed += acceleration;
-
+	if(isdownfall)
+	    velocityy += gravity * 2.5f;
+	else
+	    velocityy += gravity;
+	if(speed > maxspeed) {
+		speed += acceleration;
+	}
 	player.setPosition(
 		linelocation,
 		player.getPosY() + velocityy,
@@ -191,9 +210,16 @@ void gCanvas::controlUpdate() {
 		);
 		velocityy = 0.0f;
 		isgrounded = true;
+		isdownfall = false;
+		downfallVelocity = 0.0f;
 	}
 	else {
 		isgrounded = false;
+	}
+
+	if(isdownfall)
+	{
+	    player.tilt(-10.0f);
 	}
 
 	if(isjumping) {
@@ -285,7 +311,7 @@ void gCanvas::guiSetup() {
 void gCanvas::obstacleSetup() {
 	rows.clear();
 
-	rowSpacing = 18.0f;
+	rowSpacing = 150.0f;
 	nextRowZ = -100.0f;
 
 	for(int i = 0; i < 20; i++) {
@@ -333,8 +359,7 @@ void gCanvas::obstacleUpdate() {
 	}
 }
 void gCanvas::obstacleDraw() {
-	setColor(255, 0, 0);
-
+	setColor(255, 120, 120);
 	for(int i = 0; i < rows.size(); i++) {
 		for(int x = 0; x < 3; x++) {
 			for(int y = 0; y < 3; y++) {
@@ -359,14 +384,25 @@ void gCanvas::keyPressed(int key) {
 	case G_KEY_W:
 		pressedkey = KEY_W;
 		if(isgrounded) {
-			velocityy = 0.35f;
+			secondjump = true;
+			velocityy = 0.30f;
 			isjumping = true;
 			jumprotation = 0.0f;
 			isgrounded = false;
+		} else if(secondjump) {
+			velocityy = 0.30f;
+			secondjump = false;
 		}
 		break;
 	case G_KEY_S:
 		pressedkey = KEY_S;
+		pressedkey = KEY_S;
+
+		if(!isgrounded)
+		{
+		    isdownfall = true;
+		    downfallVelocity = -1.2f;
+		}
 		break;
 	case G_KEY_D:
 		pressedkey = KEY_D;

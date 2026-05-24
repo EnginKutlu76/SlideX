@@ -122,6 +122,13 @@ set(GlistApp_HEADERS
 		${APP_DIR}/src/Options.h
 )
 
+if(MSVC)
+    add_compile_options(/Zi)
+    add_link_options(/DEBUG)
+else()
+    add_compile_options(-g)
+endif()
+
 add_executable(${APP_NAME}
 		${GlistApp_SOURCES}
 		${GlistApp_HEADERS}

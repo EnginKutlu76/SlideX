@@ -92,6 +92,8 @@ private:
 	void enabling();
 	void disabling();
 	void obstacleUpdate();
+	float lerp(float a, float b, float t);
+
 	gApp* root;
 
 	//states
@@ -112,6 +114,9 @@ private:
 	float gravity;
 	bool isgrounded;
 	bool isjumping;
+	bool secondjump;
+	bool isdownfall = false;
+	float downfallVelocity = 0.0f;
 	float jumprotation;
 
 	float lastplanez;
@@ -150,6 +155,11 @@ private:
 	//obstacle
 	gBox obstacle;
 	ObstacleRow currentrow;
+
+	//color
+	glm::vec3 color;
+	glm::vec3 targetColor;
+	float colorphase;
 };
 
 #endif /* GCANVAS_H_ */
