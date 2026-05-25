@@ -117,7 +117,7 @@ void gCanvas::collision() {
 
 		if(dz < 3.0f) {
 			if(rows[i].cell[lane][layer]) {
-				//gamestate = GAMESTATE_PAUSE;
+				gamestate = GAMESTATE_PAUSE;
 				return;
 			}
 		}
@@ -217,18 +217,28 @@ void gCanvas::controlUpdate() {
 		isgrounded = false;
 	}
 
-	if(isdownfall)
+	static bool downfalltilted = false;
+
+	if(isdownfall && !downfalltilted)
 	{
-	    player.tilt(-10.0f);
+		player.tilt(-45.0f);
+		downfalltilted = true;
+	}
+
+	if(isgrounded && downfalltilted)
+	{
+		player.tilt(45.0f);
+		downfalltilted = false;
 	}
 
 	if(isjumping) {
-
 		player.tilt(6.0f);
-
+		player.setScale(0.8f, 0.8f, 0.8f);
 		jumprotation += 6.0f;
 
 		if(jumprotation >= 90.0f) {
+			player.tilt(-jumprotation);
+			jumprotation = 0.0f;
 			isjumping = false;
 		}
 	}
@@ -246,7 +256,7 @@ void gCanvas::planeSetup() {
 		plane[i].setPosition(
 			0,
 			0,
-			i * -81
+			i * -80
 		);
 	}
 
@@ -262,9 +272,9 @@ void gCanvas::planeDraw() {
 void gCanvas::planeUpdate() {
 	for(int i = 0; i < plane.size(); i++) {
 
-		if(plane[i].getPosZ() > player.getPosZ() + 40) {
+		if(plane[i].getPosZ() > player.getPosZ() + 60) {
 
-			lastplanez -= 81;
+			lastplanez -= 80;
 
 			plane[i].setPosition(
 				plane[i].getPosX(),
@@ -408,27 +418,36 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_D;
 		if(linestate == LINE_MID) {
 			linestate = LINE_RIGHT;
+			player.pan(6.0f);
 			linelocation = 3;
 			gLogi("line") << "you in line right";
 		} else if (linestate == LINE_LEFT) {
 			linestate = LINE_MID;
+			player.pan(6.0f);
 			linelocation = 0;
 			gLogi("line") << "you in line mid";
-		} else { gLogi("line") << "you already in line right"; }
+		} else {
+			gLogi("line") << "you already in line right";
+		}
 		break;
+
 	case G_KEY_A:
 		pressedkey = KEY_A;
 		if(linestate == LINE_MID) {
 			linestate = LINE_LEFT;
+			player.pan(-6.0f);
 			linelocation = -3;
 			gLogi("line") << "you in line left";
 		} else if (linestate == LINE_RIGHT) {
 			linestate = LINE_MID;
+			player.pan(-6.0f);
 			linelocation = 0;
 			gLogi("line") << "you in line mid";
-		} else { gLogi("line") << "you already in line left"; }
+		} else {
+			gLogi("line") << "you already in line left";
+		}
 		break;
-	case G_KEY_ESC:
+		case G_KEY_ESC:
 		if(gamestate == GAMESTATE_PLAY) {
 			gamestate = GAMESTATE_PAUSE;
 		}
