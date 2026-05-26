@@ -103,6 +103,14 @@ void gCanvas::draw() {
 	guiDraw();
 }
 
+void gCanvas::updatePlayState() {
+
+}
+
+void gCanvas::updatePauseState() {
+
+}
+
 void gCanvas::collision() {
 	int lane = 1;
 	if(player.getPosX() < -1.5f) lane = 0;
@@ -110,7 +118,7 @@ void gCanvas::collision() {
 
 	int layer = 0;
 	if(player.getPosY() > 5.0f) layer = 2;
-	else if(player.getPosY() > 3.0f) layer = 1;
+	else if(player.getPosY() > LANE_OFFSET) layer = 1;
 
 	for(int i = 0; i < rows.size(); i++) {
 		float dz = abs(player.getPosZ() - rows[i].z);
@@ -182,16 +190,15 @@ void gCanvas::controlSetup() {
 	maxspeed = -2.5f;
 	acceleration = -0.0002f;
 	velocityy = 0.0f;
-	gravity = -0.015f;
 	isjumping = false;
 	isgrounded = false;
 }
 
 void gCanvas::controlUpdate() {
 	if(isdownfall)
-	    velocityy += gravity * 2.5f;
+	    velocityy += GRAVITY * 2.5f;
 	else
-	    velocityy += gravity;
+	    velocityy += GRAVITY;
 	if(speed > maxspeed) {
 		speed += acceleration;
 	}
@@ -201,11 +208,11 @@ void gCanvas::controlUpdate() {
 		player.getPosZ() + speed
 	);
 
-	if(player.getPosY() <= 2.0f) {
+	if(player.getPosY() <= GROUND_Y) {
 
 		player.setPosition(
 			player.getPosX(),
-			2.0f,
+			GROUND_Y,
 			player.getPosZ()
 		);
 		velocityy = 0.0f;
@@ -321,13 +328,12 @@ void gCanvas::guiSetup() {
 void gCanvas::obstacleSetup() {
 	rows.clear();
 
-	rowSpacing = 150.0f;
 	nextRowZ = -100.0f;
 
 	for(int i = 0; i < 20; i++) {
 		Row r;
 		r.z = nextRowZ;
-		nextRowZ -= rowSpacing;
+		nextRowZ -= ROW_SPACING;
 
 		for(int x = 0; x < 3; x++) {
 			for(int y = 0; y < 3; y++) {
@@ -350,7 +356,7 @@ void gCanvas::obstacleUpdate() {
 	for(int i = 0; i < rows.size(); i++) {
 		if(rows[i].z > player.getPosZ() + 40.0f) {
 			rows[i].z = nextRowZ;
-			nextRowZ -= rowSpacing;
+			nextRowZ -= ROW_SPACING;
 
 			for(int x = 0; x < 3; x++) {
 				for(int y = 0; y < 3; y++) {
@@ -375,8 +381,8 @@ void gCanvas::obstacleDraw() {
 			for(int y = 0; y < 3; y++) {
 				if(!rows[i].cell[x][y]) continue;
 
-				float worldX = (x - 1) * 3.0f;
-				float worldY = 2.0f + (y * 2.0f);
+				float worldX = (x - 1) * LANE_OFFSET;
+				float worldY = GROUND_Y + (y * GROUND_Y);
 
 				obstacle.setPosition(worldX, worldY, rows[i].z);
 				obstacle.draw();
@@ -385,6 +391,41 @@ void gCanvas::obstacleDraw() {
 	}
 
 	setColor(255, 255, 255);
+}
+
+
+void gCanvas::fpsSetup() {
+	fpscounterx = scorex + 20.0f;
+	fpscountery = scorey + 30.0f;
+}
+
+void gCanvas::fpsDraw() {
+	//if(root->getShowFps() == 1) {
+	char fpsBuffer[32];
+	sprintf(fpsBuffer, "%d FPS", root->getFramerate());
+	root->secondtextfont.drawText(fpsBuffer, fpscounterx, fpscountery);
+
+}
+void gCanvas::guiDraw() {
+	if(gamestate != GAMESTATE_PAUSE) return;
+	if(isresuming) return;
+
+	setColor(0, 0, 0, 180);
+	hitbox.set(0, 0, getWidth(), getHeight());
+
+	setColor(255, 255, 255);
+
+	resumepanel.draw(rpx, rpy);
+
+	root->secondtextfont.drawText(
+		"SCORE : " + gToStr(score),
+		rpx + 80,
+		rpy + 100
+	);
+
+	setColor(255, 255, 255);
+	continuebutton.draw(leftbx, leftby);
+	mainmbutton.draw(rightbx, rightby);
 }
 
 void gCanvas::keyPressed(int key) {
@@ -458,40 +499,6 @@ void gCanvas::keyPressed(int key) {
 		break;
 	}
 	keystate |= pressedkey;
-}
-
-void gCanvas::fpsSetup() {
-	fpscounterx = scorex + 20.0f;
-	fpscountery = scorey + 30.0f;
-}
-
-void gCanvas::fpsDraw() {
-	//if(root->getShowFps() == 1) {
-	char fpsBuffer[32];
-	sprintf(fpsBuffer, "%d FPS", root->getFramerate());
-	root->secondtextfont.drawText(fpsBuffer, fpscounterx, fpscountery);
-
-}
-void gCanvas::guiDraw() {
-	if(gamestate != GAMESTATE_PAUSE) return;
-	if(isresuming) return;
-
-	setColor(0, 0, 0, 180);
-	hitbox.set(0, 0, getWidth(), getHeight());
-
-	setColor(255, 255, 255);
-
-	resumepanel.draw(rpx, rpy);
-
-	root->secondtextfont.drawText(
-		"SCORE : " + gToStr(score),
-		rpx + 80,
-		rpy + 100
-	);
-
-	setColor(255, 255, 255);
-	continuebutton.draw(leftbx, leftby);
-	mainmbutton.draw(rightbx, rightby);
 }
 
 void gCanvas::keyReleased(int key) {

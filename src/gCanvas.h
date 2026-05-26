@@ -18,7 +18,10 @@
 #include "gTexture.h"
 #include "gShadowMap.h"
 #include "gRect.h"
-
+#include "Player.h"
+#include "UiManager.h"
+#include "Obstacle.h"
+#include "GameState.h"
 
 class gCanvas : public gBaseCanvas {
 public:
@@ -54,6 +57,11 @@ private:
 		float z;
 	};
 
+	static constexpr float LANE_OFFSET = 3.0f;
+	static constexpr float GROUND_Y = 2.0f;
+	static constexpr float GRAVITY = -0.015f;
+	static constexpr float ROW_SPACING = 150.0f;
+
 	std::vector<Row> rows;
 	float nextRowZ;
 	float rowSpacing;
@@ -76,14 +84,11 @@ private:
 	void obstacleSetup();
 	void scoreSetup();
 	void planeSetup();
-	void controlSetup();
 	void timingSetup();
 	void camSetup();
 	void camUpdate();
 	void planeUpdate();
-	void controlUpdate();
 	void timingUpdate();
-	void collision();
 	void fpsDraw();
 	void guiDraw();
 	void obstacleDraw();
@@ -92,7 +97,16 @@ private:
 	void enabling();
 	void disabling();
 	void obstacleUpdate();
-	float lerp(float a, float b, float t);
+
+	void handleMovementInput();
+	void handleGameplayInput();
+	void collision();
+	void controlSetup();
+	void controlUpdate();
+
+	void updatePlayState();
+	void updatePauseState();
+	void updateGameOverState();
 
 	gApp* root;
 
