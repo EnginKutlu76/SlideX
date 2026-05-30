@@ -37,10 +37,12 @@ public:
 	void saveGameSettings(int language, int vsync, int showfps);
 	void saveGraphicsSettings(int windowmode);
 	void saveAudioSettings(int soundvolume, int musicvolume, int sound, int music);
+	void saveHighScore(int highscore);
 
 	void loadGameSettings();
 	void loadGraphicsSettings();
 	void loadAudioSettings();
+	void loadHighScore();
 
 	void applyGameSettings();
 	void applyControlsSettings();
@@ -66,6 +68,7 @@ public:
 	int getMusicVolume();
 	int getSound();
 	int getMusic();
+	int getHighScore();
 //	int getExperience();
 
 private:
@@ -74,7 +77,7 @@ private:
 	gLocalization localization;
 	gImage* background;
 	gDatabase optionsdb;
-	int language, sensitivity, showfps, vsync, windowmode, soundvolume, musicvolume, sound, music;
+	int language, sensitivity, showfps, vsync, windowmode, soundvolume, musicvolume, sound, music, highscore;
 };
 
 #endif /* GAPP_H_ */

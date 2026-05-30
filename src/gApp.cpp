@@ -63,6 +63,8 @@ void gApp::loadAssets() {
 	optionsdb.execute("INSERT OR IGNORE INTO options (key,value) VALUES ('sound','1')");
 	optionsdb.execute("INSERT OR IGNORE INTO options (key,value) VALUES ('music','1')");
 
+	optionsdb.execute("INSERT OR IGNORE INTO options (key,value) VALUES ('highscore','0')");
+
 	// LOCALIZATION DB
 	gDatabase locdb;
 	locdb.loadDatabase("localization.db");
@@ -78,6 +80,7 @@ void gApp::loadAssets() {
 	loadGameSettings();
 	loadGraphicsSettings();
 	loadAudioSettings();
+	loadHighScore();
 }
 
 void gApp::update() {
@@ -112,6 +115,12 @@ void gApp::saveAudioSettings(int soundvolume, int musicvolume, int sound, int mu
 	optionsdb.execute("UPDATE options SET value=" + gToStr(music) + " WHERE key='music'");
 }
 
+void gApp::saveHighScore(int highscore) {
+	this->highscore = highscore;
+
+	optionsdb.execute("UPDATE options SET value=" + gToStr(highscore) + " WHERE key='highscore'");
+}
+
 void gApp::loadGameSettings(){
 	optionsdb.execute("SELECT value FROM options WHERE key='language'");
 	language = safeGetInt(optionsdb.getSelectData());
@@ -143,6 +152,11 @@ void gApp::loadAudioSettings() {
 
 	optionsdb.execute("SELECT value FROM options WHERE key='music'");
 	music = safeGetInt(optionsdb.getSelectData());
+}
+
+void gApp::loadHighScore() {
+	optionsdb.execute("SELECT value FROM options WHERE key='highscore'");
+	highscore = safeGetInt(optionsdb.getSelectData());
 }
 
 void gApp::applyGameSettings() {
@@ -224,7 +238,11 @@ int gApp::getMusicVolume() {
 int gApp::getSound() {
 	return sound;
 }
+
 int gApp::getMusic() {
 	return music;
 }
 
+int gApp::getHighScore() {
+	return highscore;
+}

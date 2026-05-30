@@ -22,9 +22,9 @@ gCanvas::~gCanvas() {
 void gCanvas::setup() {
 	gamestate = GAMESTATE_PLAY;
 	keystate = KEY_NONE;
-	light.setAmbientColor(170, 170, 170);
-	light.setDiffuseColor(220, 220, 220);
-	light.setSpecularColor(255, 255, 255);
+	light.setAmbientColor(255, 255, 255);
+	light.setDiffuseColor(0, 0, 0);
+	light.setSpecularColor(0, 0, 0);
 	light.setPosition(0.0f, 50.0f, 50.0f);
 	linestate = LINE_MID;
 	linelocation = 0;
@@ -56,6 +56,10 @@ void gCanvas::update() {
 	if(dz > 0)
 		scoreFloat += dz * 0.1f;
 
+	if(score > highscore) {
+	    highscore = score;
+	    root->saveHighScore(highscore);
+	}
 	score = (int)scoreFloat;
 	lastplayerz = player.getPosZ();
 
@@ -64,7 +68,7 @@ void gCanvas::update() {
 	collision();
 	planeUpdate();
 	camUpdate();
-	colorphase += root->getAppManager()->getElapsedTime() * 2.5f;
+	colorphase += root->getAppManager()->getElapsedTime() * 0.05f;
 
 	targetColor = glm::vec3(
 	    127.5f + 127.5f * std::sin(colorphase),
@@ -217,6 +221,7 @@ void gCanvas::controlUpdate() {
 		);
 		velocityy = 0.0f;
 		isgrounded = true;
+		player.setScale(1.0f, 1.0f, 1.0f);
 		isdownfall = false;
 		downfallVelocity = 0.0f;
 	}
@@ -293,6 +298,7 @@ void gCanvas::planeUpdate() {
 }
 
 void gCanvas::scoreSetup() {
+	highscore = root->getHighScore();
 	score = 0;
 	scorex = (getWidth() - root->textfont.getStringWidth(gToStr(score))) / 2;
 	scorey = root->textfont.getStringHeight(gToStr(score));
@@ -375,7 +381,7 @@ void gCanvas::obstacleUpdate() {
 	}
 }
 void gCanvas::obstacleDraw() {
-	setColor(255, 120, 120);
+	setColor((int)color.r, (int)color.g, (int)color.b);
 	for(int i = 0; i < rows.size(); i++) {
 		for(int x = 0; x < 3; x++) {
 			for(int y = 0; y < 3; y++) {
@@ -384,6 +390,7 @@ void gCanvas::obstacleDraw() {
 				float worldX = (x - 1) * LANE_OFFSET;
 				float worldY = GROUND_Y + (y * GROUND_Y);
 
+				obstacle.setScale(1.5f, 1.0f, 1.0f);
 				obstacle.setPosition(worldX, worldY, rows[i].z);
 				obstacle.draw();
 			}
@@ -423,6 +430,12 @@ void gCanvas::guiDraw() {
 		rpy + 100
 	);
 
+	root->secondtextfont.drawText(
+		"BEST SCORE : " + gToStr(highscore),
+		rpx + 80,
+		rpy + 200
+	);
+
 	setColor(255, 255, 255);
 	continuebutton.draw(leftbx, leftby);
 	mainmbutton.draw(rightbx, rightby);
@@ -459,12 +472,12 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_D;
 		if(linestate == LINE_MID) {
 			linestate = LINE_RIGHT;
-			player.pan(6.0f);
+			player.tilt(60.0f);
 			linelocation = 3;
 			gLogi("line") << "you in line right";
 		} else if (linestate == LINE_LEFT) {
 			linestate = LINE_MID;
-			player.pan(6.0f);
+			player.tilt(60.0f);
 			linelocation = 0;
 			gLogi("line") << "you in line mid";
 		} else {
@@ -476,12 +489,12 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_A;
 		if(linestate == LINE_MID) {
 			linestate = LINE_LEFT;
-			player.pan(-6.0f);
+			player.tilt(-60.0f);
 			linelocation = -3;
 			gLogi("line") << "you in line left";
 		} else if (linestate == LINE_RIGHT) {
 			linestate = LINE_MID;
-			player.pan(-6.0f);
+			player.tilt(-60.0f);
 			linelocation = 0;
 			gLogi("line") << "you in line mid";
 		} else {

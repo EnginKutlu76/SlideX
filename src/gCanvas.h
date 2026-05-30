@@ -146,6 +146,7 @@ private:
 	int score;
 	int scorex, scorey;
 	float scoreFloat;
+	int highscore;
 
 	int fpscounterx, fpscountery;
 
