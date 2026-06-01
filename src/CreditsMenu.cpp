@@ -17,6 +17,11 @@ CreditsMenu::~CreditsMenu() {
 }
 
 void CreditsMenu::setup() {
+	backgroundimg.loadImage("UIasset/PNG/MainPanel03.png");
+	bgw = backgroundimg.getWidth();
+	bgh = backgroundimg.getHeight();
+	bgx = 0;
+	bgy = 0;
 	setupTexts();
 	setupButton();
 
@@ -29,6 +34,7 @@ void CreditsMenu::update() {
 }
 
 void CreditsMenu::draw() {
+	backgroundimg.draw(0, 0);
 	drawTexts();
 	drawButton();
 }
@@ -68,7 +74,7 @@ void CreditsMenu::drawTexts() {
 }
 
 void CreditsMenu::setupButton() {
-	returntext = root->localizeWord(root->returnkey);
+	returntext = root->returnkey;
 
 	returnw = root->textfont.getStringWidth(returntext);
 	returnh = root->textfont.getStringHeight(returntext);

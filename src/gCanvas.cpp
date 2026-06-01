@@ -20,11 +20,15 @@ gCanvas::~gCanvas() {
 }
 
 void gCanvas::setup() {
+	tex.loadTexture("ss.jpg");
+	mat.setDiffuseMap(&tex);
+	player.setMaterial(&mat);
+
 	gamestate = GAMESTATE_PLAY;
 	keystate = KEY_NONE;
 	light.setAmbientColor(255, 255, 255);
-	light.setDiffuseColor(0, 0, 0);
-	light.setSpecularColor(0, 0, 0);
+	light.setDiffuseColor(110, 110, 101);
+	light.setSpecularColor(10, 10, 10);
 	light.setPosition(0.0f, 50.0f, 50.0f);
 	linestate = LINE_MID;
 	linelocation = 0;
@@ -359,6 +363,8 @@ void gCanvas::obstacleSetup() {
 	}
 }
 void gCanvas::obstacleUpdate() {
+	obstacle.setMaterial(&mat);
+
 	for(int i = 0; i < rows.size(); i++) {
 		if(rows[i].z > player.getPosZ() + 40.0f) {
 			rows[i].z = nextRowZ;

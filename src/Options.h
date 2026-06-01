@@ -10,6 +10,7 @@
 
 #include <gBaseCanvas.h>
 #include "gApp.h"
+#include "gImage.h"
 
 class Options: public gBaseCanvas {
 public:
@@ -34,14 +35,16 @@ public:
 
 	void showNotify();
 	void hideNotify();
+
+	float uiscale;
+	void updateScale();
+
 private:
 	gApp* root;
 
 	static const int  BUTTON_NONE = 0, BUTTON_PRESSED = 1, BUTTON_CANCELED = -1, BUTTON_PERFORMED = 2, BUTTON_FOCUS = 3;
 	static const int TAB_NONE = 0, TAB_GAME = 1, TAB_CONTROLS = 2, TAB_GRAPHICS = 3, TAB_AUDIO = 4, TAB_APPLY = 5, TAB_RESET = 6;
-	static const int languagenum = 2, resolutionnum = 3, windowmodenum = 3, qualitynum = 3, keynum = 7;
-	static const int LANG_EN = 1, LANG_TR = 2;
-	static const int KEY_NONE = -1, KEY_FORWARD = 0, KEY_BACKWARD = 1, KEY_RIGHT = 2, KEY_LEFT = 3, KEY_RUN = 4, KEY_FIRE = 5, KEY_INTERACT = 6;
+	static const int keynum = 7;
 
 	//tab funcs
 	void tabSetup();
@@ -61,42 +64,30 @@ private:
 	void gameTabButtonSetup();
 	void gameTabButtonDraw();
 	void gameSettingsSetup();
-	void languageSetup();
-	void fpsSetup();
-	void vsyncSetup();
 	void gameSettingsPressed(int x, int y);
 	void gameSettingsReleased(int x, int y);
 	void gameSettingsFocus(int x, int y);
 	void gameSettingsDraw();
-	void languageDraw();
-	void fpsDraw();
-	void vsyncDraw();
 
 	//graphics funcs
 	void graphicsTabButtonSetup();
 	void graphicsTabButtonDraw();
 	void graphicsSettingsSetup();
-	void windowmodeSetup();
 	void graphicsSettingsPressed(int x, int y);
 	void graphicsSettingsReleased(int x, int y);
 	void graphicsSettingsFocus(int x, int y);
 	void graphicsSettingsDraw();
-	void windowmodeDraw();
 
 	//audio funcs
 	void audioTabButtonSetup();
 	void audioTabButtonDraw();
 	void audioSettingsSetup();
-	void musicSetup();
-	void fxSetup();
 	void musictickSetup();
 	void fxtickSetup();
 	void audioSettingsPressed(int x, int y);
 	void audioSettingsReleased(int x, int y);
 	void audioSettingsFocus(int x, int y);
 	void audioSettingsDraw();
-	void musicDraw();
-	void fxDraw();
 	void musictickDraw();
 	void fxtickDraw();
 
@@ -119,6 +110,9 @@ private:
 	void returnSetup();
 	void returnDraw();
 
+	//void refreshHitboxes();
+	//void loadAssets();
+
 	//tabs
 	gRect gametabbutton, graphicstabbutton, audiotabbutton, applytabbutton, resettabbutton;
 	std::string gametabtext, graphicstabtext, audiotabtext, applytabtext, resettabtext;
@@ -140,65 +134,7 @@ private:
 	int containerx, containery, containerw, containerh;
 	gColor containercolor;
 
-	//game settings
-	std::string languagelabeltext;
-	std::string languages[2];
-	gImage langbackbutton, langforwardbutton;
-	gRect langbackbuttonhitbox, langforwardbuttonhitbox;
-	int languagelabelx, languagelabely, languagelabelw, languagelabelh;
-	int languagesx, languagesw, languagesh;
-	int langbackbuttonx, langbackbuttony, langbackbuttonw, langbackbuttonh, langforwardbuttonx;
-	int langbackstate, langfwstate;
-	int selectedlanguage;
-
-	gImage fpsuncheck, fpscheck;
-	gRect fpsbuttonhitbox;
-	std::string fpstext;
-	int fpstextx, fpstexty, fpstextw, fpstexth;
-	int fpsuncheckx, fpsunchecky, fpsuncheckw, fpsuncheckh;
-	int fpscheckw, fpscheckh;
-	int fpstickstate;
-	bool isfpsenabled;
-
-	gImage vsyncuncheck, vsynccheck;
-	gRect vsyncbuttonhitbox;
-	std::string vsynctext;
-	int vsynctextx, vsynctexty, vsynctextw, vsynctexth;
-	int vsyncuncheckx, vsyncunchecky, vsyncuncheckw, vsyncuncheckh;
-	int vsynccheckw, vsynccheckh;
-	int vsynctickstate;
-	bool isvsyncenabled;
-
-	//graphics settings
-	gImage winbackbutton, winforwardbutton;
-	gRect winbackbuttonhitbox, winforwardbuttonhitbox;
-	std::string windowmodelabeltext;
-	std::string windowmodes[3];
-	int winlabelx, winlabely, winlabelw, winlabelh;
-	int windowmodesx, windowmodesw, windowmodesh;
-	int winbackbuttonx, winbackbuttony, winbackbuttonw, winbackbuttonh, winforwardbuttonx;
-	int winbackstate, winfwstate;
-	int selectedwindowmode;
-
 	//audio settings
-	gImage musicbackbutton, musicforwardbutton;
-	gRect musicbackbuttonhitbox, musicforwardbuttonhitbox;
-	std::string musiclabeltext, musicnumtext;
-	int musicvalue;
-	int musiclabelx, musiclabely, musiclabelw, musiclabelh;
-	int musicx, musicw, musich;
-	int musicbackbuttonx, musicbackbuttony, musicbackbuttonw, musicbackbuttonh, musicforwardbuttonx;
-	int musicbackstate, musicfwstate;
-
-	gImage fxbackbutton, fxforwardbutton;
-	gRect fxbackbuttonhitbox, fxforwardbuttonhitbox;
-	std::string fxlabeltext, fxnumtext;
-	int effectvalue;
-	int fxlabelx, fxlabely, fxlabelw, fxlabelh;
-	int fxx, fxw, fxh;
-	int fxbackbuttonx, fxbackbuttony, fxbackbuttonw, fxbackbuttonh, fxforwardbuttonx;
-	int fxbackstate, fxfwstate;
-
 	gImage musicuncheck, musiccheck;
 	gRect musicbuttonhitbox;
 	std::string musictext;
@@ -233,6 +169,11 @@ private:
 	int settingrowh;
 	int settingvaluex;
 	int settingiconoffset;
+
+	gImage backgroundimg;
+	gImage returnimg;
+	gImage applyimg;
+	gImage resetimg;
 };
 
 #endif /* SRC_OPTIONS_H_ */

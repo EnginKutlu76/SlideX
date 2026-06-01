@@ -53,8 +53,6 @@ private:
 	void logoSetup();
 	void startSetup();
 	void optionSetup();
-	void contactSetup();
-	void creditSetup();
 	void colorSetup();
 
 	void updateButtonState(int x, int y);
@@ -65,23 +63,20 @@ private:
 	void logoDraw();
 	void startDraw();
 	void optionDraw();
-	void creditDraw();
-	void contactDraw();
 	void fadeEffectDraw();
 
 	gImage background;
-	std::string starttext, optiontext, credittext, exittext, contacttext;
+	std::string starttext, optiontext;
 	gImage glistlogo;
 	int glistlogox, glistlogoy, glistlogow, glistlogoh;
 	int nitralogox, nitralogoy, nitralogow, nitralogoh;
 	int startx, starty, startw, starth;
 	int optionx, optiony, optionw, optionh;
-	int contactx, contacty, contactw, contacth;
-	int creditx, credity, creditw, credith;
 	int titlex, titley, titlew, titleh;
-	gRect starthitbox, optionhitbox, credithitbox, contacthitbox;
-	int startstate, optionstate, creditstate, contactstate;
+	gRect starthitbox, optionhitbox;
+	int startstate, optionstate;
 	gColor pressedcolor, normalcolor, focuscolor;
+	//gImage startlogo, optionslogo, contactlogo, creditslogo;
 	//std::unique_ptr<Fade> fadeeffect;
 };
 

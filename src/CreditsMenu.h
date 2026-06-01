@@ -4,6 +4,7 @@
 #include <gBaseCanvas.h>
 #include "gApp.h"
 #include "gRect.h"
+#include "gImage.h"
 
 class CreditsMenu: public gBaseCanvas {
 public:
@@ -44,6 +45,9 @@ private:
 
 	std::string title;
 	int titley;
+
+	gImage backgroundimg;
+	int bgx, bgy, bgw, bgh;
 };
 
 #endif

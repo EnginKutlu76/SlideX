@@ -175,6 +175,9 @@ private:
 	glm::vec3 color;
 	glm::vec3 targetColor;
 	float colorphase;
+
+	gTexture tex;
+	gMaterial mat;
 };
 
 #endif /* GCANVAS_H_ */

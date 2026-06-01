@@ -24,7 +24,7 @@ public:
 	void setup();
 	void update();
 
-	gFont gametitlefont, titlefont, textfont, secondtextfont;
+	gFont gametitlefont, titlefont, textfont, secondtextfont, thirdtextfont;
 
 	std::string titlekey = "Slide X", languagekey = "language", showfpskey = "showfps",
 	soundvolumekey = "soundvolume", musicvolumekey = "musicvolume", soundkey = "sound", musickey = "music",
@@ -34,9 +34,7 @@ public:
 	void drawMenuBackground(int w, int h);
 	std::string localizeWord(std::string word);
 
-	void saveGameSettings(int language, int vsync, int showfps);
-	void saveGraphicsSettings(int windowmode);
-	void saveAudioSettings(int soundvolume, int musicvolume, int sound, int music);
+	void saveAudioSettings(int sound, int music);
 	void saveHighScore(int highscore);
 
 	void loadGameSettings();
@@ -60,12 +58,6 @@ public:
 	void setMusicEnabled(bool enabled);
 	bool getMusicEnabled() const { return musicenabled; }
 
-	int getLanguage();
-	int getShowFps();
-	int getVsync();
-	int getWindowMode();
-	int getSoundVolume();
-	int getMusicVolume();
 	int getSound();
 	int getMusic();
 	int getHighScore();
@@ -74,10 +66,9 @@ public:
 private:
 	bool musicenabled = true;
 	void loadAssets();
-	gLocalization localization;
 	gImage* background;
 	gDatabase optionsdb;
-	int language, sensitivity, showfps, vsync, windowmode, soundvolume, musicvolume, sound, music, highscore;
+	int sound, music, highscore;
 };
 
 #endif /* GAPP_H_ */
