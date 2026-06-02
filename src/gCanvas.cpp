@@ -613,7 +613,24 @@ void gCanvas::mouseExited() {
 }
 
 void gCanvas::windowResized(int w, int h) {
+	rpw = resumepanel.getWidth();
+	rph = resumepanel.getHeight();
+	rpx = (w - rpw) / 2.0f;
+	rpy = (h - rph) / 2.0f;
 
+	leftbx = rpx + 100;
+	leftby = rpy + 300;
+
+	rightbx = rpx + 300;
+	rightby = rpy + 300;
+
+	scorex = (w - root->textfont.getStringWidth(gToStr(score))) / 2;
+	scorey = root->textfont.getStringHeight(gToStr(score));
+
+	fpscounterx = scorex + 20.0f;
+	fpscountery = scorey + 30.0f;
+
+	hitbox.set(0, 0, w, h);
 }
 
 void gCanvas::showNotify() {

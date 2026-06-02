@@ -196,9 +196,13 @@ void Options::mouseExited() {
 }
 
 void Options::windowResized(int w, int h) {
-//    updateScale();
-//   containerSetup();
-//    tabSetup();
+	containerSetup();
+	tabSetup();
+	contactSetup();
+	creditsSetup();
+	sectiontitle = "OPTIONS";
+	titlex = (containerw + gametabbuttonw) / 2;
+	titley = tabh;
 }
 
 void Options::showNotify() {

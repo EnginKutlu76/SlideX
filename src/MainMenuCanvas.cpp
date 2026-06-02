@@ -75,6 +75,9 @@ void MainMenuCanvas::mouseExited() {
 }
 
 void MainMenuCanvas::windowResized(int w, int h) {
+    logoSetup();
+    startSetup();
+    optionSetup();
 }
 
 void MainMenuCanvas::showNotify() {
