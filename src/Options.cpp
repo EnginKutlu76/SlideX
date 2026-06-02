@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "gCanvas.h"
 #include "MainMenuCanvas.h"
+#include "CreditsMenu.h"
 
 Options::Options(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
@@ -20,6 +21,7 @@ Options::~Options() {
 void Options::setup() {
 	containerSetup();
 	tabSetup();
+	contactSetup();
 	sectiontitle = "OPTIONS";
 	titlex = (containerw + gametabbuttonw) / 2;
 	titley = tabh;
@@ -32,9 +34,38 @@ void Options::draw() {
 	root->drawMenuBackground(getWidth(), getHeight());
 	containerDraw();
 	tabDraw();
+	if(showContactPanel) {
+		contactDraw();
+	}
 	setColor(255, 255, 255);
 	root->titlefont.drawText(sectiontitle, titlex, titley);
 	setColor(normalcolor);
+}
+
+void Options::contactSetup() {
+	contactlines.clear();
+
+	contactlines.push_back("E-Mail: contact@yourmail.com");
+	contactlines.push_back("X: x.com/youraccount");
+	contactlines.push_back("Instagram: instagram.com/youraccount");
+	contactlines.push_back("Website: yourwebsite.com");
+	contactlines.push_back("itch.io: yourname.itch.io");
+
+	contactlineh = root->secondtextfont.getStringHeight("y");
+
+	contactx = containerx + containerw * 0.08f;
+	contacty = containery + containerh * 0.18f;
+}
+
+void Options::contactDraw() {
+	setColor(0, 0, 0);
+
+	float y = contacty;
+
+	for(const auto& line : contactlines) {
+		root->secondtextfont.drawText(line, contactx, y);
+		y += contactlineh + 30.0f;
+	}
 }
 
 void Options::updateScale() {
@@ -115,6 +146,8 @@ void Options::tabSetup() {
 	focuscolor.set(55, 60, 80);
 	applyTabButtonSetup();
 	resetTabButtonSetup();
+	contactTabButtonSetup();
+	creditsTabButtonSetup();
 	returnSetup();
 }
 
@@ -122,6 +155,8 @@ void Options::tabDraw() {
 	setColor(normalcolor);
 	applyTabButtonDraw();
 	resetTabButtonDraw();
+	contactTabButtonDraw();
+	creditsTabButtonDraw();
 	returnDraw();
 }
 
@@ -137,6 +172,14 @@ void Options::tabButtonPressed(int x, int y) {
 
 	if(resettabbutton.contains(x, y)) {
 		resettabbuttonstate = BUTTON_PRESSED;
+	}
+
+	if(contactbutton.contains(x, y)) {
+		contactbuttonstate = BUTTON_PRESSED;
+	}
+
+	if(creditsbutton.contains(x, y)) {
+		creditsbuttonstate = BUTTON_PRESSED;
 	}
 }
 
@@ -158,10 +201,22 @@ void Options::tabButtonReleased(int x, int y) {
 		root->setCurrentCanvas(new MainMenuCanvas(root));
 	}
 
+	else if(contactbutton.contains(x, y) && contactbuttonstate == BUTTON_PRESSED) {
+		contactbuttonstate = BUTTON_PERFORMED;
+		showContactPanel = true;
+	}
+
+	else if(creditsbutton.contains(x, y) && creditsbuttonstate == BUTTON_PRESSED) {
+		creditsbuttonstate = BUTTON_PERFORMED;
+		root->setCurrentCanvas(new CreditsMenu(root));
+	}
+
 	else {
 		applytabbuttonstate = BUTTON_CANCELED;
 		resettabbuttonstate = BUTTON_CANCELED;
 		returnbuttonstate= BUTTON_CANCELED;
+		contactbuttonstate = BUTTON_CANCELED;
+		creditsbuttonstate= BUTTON_CANCELED;
 	}
 }
 
@@ -192,6 +247,25 @@ void Options::tabButtonFocus(int x, int y) {
 			returnbuttonstate = BUTTON_NONE;
 		}
 	}
+
+	if(contactbuttonstate != BUTTON_PRESSED) {
+		if(contactbutton.contains(x, y)) {
+			contactbuttonstate = BUTTON_FOCUS;
+		}
+		else {
+			contactbuttonstate = BUTTON_NONE;
+		}
+	}
+
+	if(creditsbuttonstate != BUTTON_PRESSED) {
+		if(creditsbutton.contains(x, y)) {
+			creditsbuttonstate = BUTTON_FOCUS;
+		}
+		else {
+			creditsbuttonstate = BUTTON_NONE;
+		}
+	}
+
 }
 
 void Options::containerSetup() {
@@ -199,6 +273,9 @@ void Options::containerSetup() {
 	returnimg.loadImage("UIasset/PNG/button12.png");
 	applyimg.loadImage("UIasset/PNG/button14.png");
 	resetimg.loadImage("UIasset/PNG/button13.png");
+
+	contactimg.loadImage("UIasset/PNG/button14.png");
+	creditsimg.loadImage("UIasset/PNG/button13.png");
 
 	int width = getWidth();
 	int height = getHeight();
@@ -336,6 +413,27 @@ void Options::resetTabButtonSetup() {
 	resettabbutton.set(resettabbuttonx, resettabbuttony, resettabbuttonx + resettabbuttonw, resettabbuttony + resettabbuttonh);
 }
 
+void Options::contactTabButtonSetup() {
+	contacttext = "Contact";
+	contactbuttonstate = BUTTON_NONE;
+	contacttabbuttonh = tabh;
+	contacttabbuttonw = (tabw - (tabw * 0.08)) / 2;
+	contacttabbuttonx = containerx;
+	contacttabbuttony = containery;
+	contactbutton.set(contacttabbuttonx, contacttabbuttony, contacttabbuttonx + contacttabbuttonw, contacttabbuttony + contacttabbuttonh);
+}
+
+void Options::creditsTabButtonSetup() {
+	creditstext = "Credits";
+	creditsbuttonstate = BUTTON_NONE;
+	creditstabbuttonh = tabh;
+	creditstabbuttonw = (tabw - (tabw * 0.08)) / 2;
+	creditstabbuttonx = contacttabbuttonx + contacttabbuttonw + (tabw * 0.085);
+	creditstabbuttony = contacttabbuttony;
+	creditsbutton.set(creditstabbuttonx, creditstabbuttony, creditstabbuttonx + creditstabbuttonw, creditstabbuttony + creditstabbuttonh);
+}
+
+
 void Options::applyTabButtonDraw() {
 	if(applytabbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
 	if(applytabbuttonstate == BUTTON_PRESSED || applytabbuttonstate == BUTTON_PERFORMED || activetab == TAB_APPLY) setColor(pressedcolor);
@@ -359,6 +457,32 @@ void Options::resetTabButtonDraw() {
 	tabfonty = resettabbuttony + (resettabbuttonh + tabfonth) / 2;
 	setColor(255, 255, 255);
 	root->thirdtextfont.drawText(resettabtext, tabfontx, tabfonty);
+	setColor(normalcolor);
+}
+
+void Options::contactTabButtonDraw() {
+	if(contactbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
+	if(contactbuttonstate == BUTTON_PRESSED || contactbuttonstate == BUTTON_PERFORMED || activetab == TAB_CONTACT) setColor(pressedcolor);
+	contactimg.draw(contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh);
+	tabfontw = root->secondtextfont.getStringWidth(contacttext);
+	tabfonth = root->secondtextfont.getStringHeight(contacttext);
+	tabfontx = contacttabbuttonx + (contacttabbuttonw - tabfontw) / 2;
+	tabfonty = contacttabbuttony + (contacttabbuttonh + tabfonth) / 2;
+	setColor(255, 255, 255);
+	root->thirdtextfont.drawText(contacttext, tabfontx, tabfonty);
+	setColor(normalcolor);
+}
+
+void Options::creditsTabButtonDraw() {
+	if(creditsbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
+	if(creditsbuttonstate == BUTTON_PRESSED || creditsbuttonstate == BUTTON_PERFORMED || activetab == TAB_CREDITS) setColor(pressedcolor);
+	creditsimg.draw(creditstabbuttonx, creditstabbuttony, creditstabbuttonw, creditstabbuttonh);
+	tabfontw = root->secondtextfont.getStringWidth(creditstext);
+	tabfonth = root->secondtextfont.getStringHeight(creditstext);
+	tabfontx = creditstabbuttonx + (creditstabbuttonw - tabfontw) / 2;
+	tabfonty = creditstabbuttony + (creditstabbuttonh + tabfonth) / 2;
+	setColor(255, 255, 255);
+	root->thirdtextfont.drawText(creditstext, tabfontx, tabfonty);
 	setColor(normalcolor);
 }
 

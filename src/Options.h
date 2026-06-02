@@ -43,7 +43,7 @@ private:
 	gApp* root;
 
 	static const int  BUTTON_NONE = 0, BUTTON_PRESSED = 1, BUTTON_CANCELED = -1, BUTTON_PERFORMED = 2, BUTTON_FOCUS = 3;
-	static const int TAB_NONE = 0, TAB_GAME = 1, TAB_CONTROLS = 2, TAB_GRAPHICS = 3, TAB_AUDIO = 4, TAB_APPLY = 5, TAB_RESET = 6;
+	static const int TAB_NONE = 0, TAB_GAME = 1, TAB_CONTROLS = 2, TAB_GRAPHICS = 3, TAB_AUDIO = 4, TAB_APPLY = 5, TAB_RESET = 6, TAB_CONTACT = 7, TAB_CREDITS = 8;
 	static const int keynum = 7;
 
 	//tab funcs
@@ -97,12 +97,6 @@ private:
 	void applyTabButtonDraw();
 	void resetTabButtonDraw();
 
-	void applyGameSettings();
-	void resetGameSettings();
-
-	void applyGraphicsSettings();
-	void resetGraphicsSettings();
-
 	void applyAudioSettings();
 	void resetAudioSettings();
 
@@ -110,19 +104,28 @@ private:
 	void returnSetup();
 	void returnDraw();
 
+	//contact and credits button
+	void contactTabButtonSetup();
+	void creditsTabButtonSetup();
+	void contactTabButtonDraw();
+	void creditsTabButtonDraw();
+	void contactSetup();
+	void contactDraw();
 	//void refreshHitboxes();
 	//void loadAssets();
 
 	//tabs
-	gRect gametabbutton, graphicstabbutton, audiotabbutton, applytabbutton, resettabbutton;
-	std::string gametabtext, graphicstabtext, audiotabtext, applytabtext, resettabtext;
-	int gametabbuttonstate, graphicstabbuttonstate, audiotabbuttonstate, applytabbuttonstate, resettabbuttonstate;
+	gRect gametabbutton, graphicstabbutton, audiotabbutton, applytabbutton, resettabbutton, contactbutton, creditsbutton;
+	std::string gametabtext, graphicstabtext, audiotabtext, applytabtext, resettabtext, contacttext, creditstext;
+	int gametabbuttonstate, graphicstabbuttonstate, audiotabbuttonstate, applytabbuttonstate, resettabbuttonstate, contactbuttonstate, creditsbuttonstate;
 
 	int gametabbuttonx, gametabbuttony, gametabbuttonw, gametabbuttonh;
 	int graphicstabbuttonx, graphicstabbuttony, graphicstabbuttonw, graphicstabbuttonh;
 	int audiotabbuttonx, audiotabbuttony, audiotabbuttonw, audiotabbuttonh;
 	int applytabbuttonx, applytabbuttony, applytabbuttonw, applytabbuttonh;
 	int resettabbuttonx, resettabbuttony, resettabbuttonw, resettabbuttonh;
+	int contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh;
+	int creditstabbuttonx, creditstabbuttony, creditstabbuttonw, creditstabbuttonh;
 	int tabfontx, tabfonty, tabfontw, tabfonth;
 	int tabx, taby, tabw, tabh;
 
@@ -174,6 +177,14 @@ private:
 	gImage returnimg;
 	gImage applyimg;
 	gImage resetimg;
+	gImage contactimg;
+	gImage creditsimg;
+
+	bool showContactPanel = false;
+
+	std::vector<std::string> contactlines;
+	float contactlineh;
+	float contactx, contacty;
 };
 
 #endif /* SRC_OPTIONS_H_ */
