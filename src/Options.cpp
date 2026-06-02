@@ -22,6 +22,7 @@ void Options::setup() {
 	containerSetup();
 	tabSetup();
 	contactSetup();
+	creditsSetup();
 	sectiontitle = "OPTIONS";
 	titlex = (containerw + gametabbuttonw) / 2;
 	titley = tabh;
@@ -34,17 +35,76 @@ void Options::draw() {
 	root->drawMenuBackground(getWidth(), getHeight());
 	containerDraw();
 	tabDraw();
-	if(showContactPanel) {
+	if(showcontactpanel) {
 		contactDraw();
 	}
+
+	if(showcreditspanel) {
+		creditsDraw();
+	}
 	setColor(255, 255, 255);
-	root->titlefont.drawText(sectiontitle, titlex, titley);
+	root->titlefont.drawText(sectiontitle, (getScreenWidth() - root->titlefont.getStringWidth(sectiontitle)) / 2, (root->titlefont.getStringHeight(sectiontitle)) / 2);
 	setColor(normalcolor);
+}
+
+void Options::creditsSetup() {
+	creditspanel.loadImage("UIasset/PNG/MainPanel03.png");
+	crexit.loadImage("button.png");
+	line1 = "Developed By";
+	line2 = "Engin Kutlu";
+	line3 = "Game Studio: Tengri Games";
+	line4 = "Programming & Design: Engin Kutlu";
+	line5 = "Special Thanks: glistEngine, GameLab Istanbul";
+	line6 = "Assets & Fonts Licensed (dafont)";
+	line7 = "(c) 2026";
+
+	centerx = getScreenWidth() / 2;
+	linegap = 30;
+
+	starty = getHeight() / 2 - 3 * linegap;
+	tabtitle = "CREDITS";
+	titley = getHeight() * 15 / 100;
+
+	crpanelw = creditspanel.getWidth() * 2.4f;
+	crpanelh = creditspanel.getHeight() * 2.4f;
+	crpanelx = (getWidth() - crpanelw) / 2;
+	crpanely = (getHeight() - crpanelh) / 3;
+	crexitw = crexit.getWidth() * 0.10;
+	crexith = crexit.getHeight() * 0.10;
+	crexitx = (crpanelx + crpanelw) - crexitw;
+	crexity = crpanely;
+
+	crexitbutton.set(crexitx, crexity, crexitx + crexitw, crexity + crexith);
+	crexitbuttonstate = BUTTON_NONE;
+}
+
+void Options::creditsDraw() {
+	creditspanel.draw(crpanelx, crpanely, crpanelw, crpanelh);
+	setColor(255, 255, 255);
+	if(crexitbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
+	if(crexitbuttonstate == BUTTON_PRESSED) setColor(pressedcolor);
+	crexit.draw(crexitx, crexity, crexitw, crexith);
+	setColor(255, 255, 255);
+
+	int y = starty;
+	std::vector<std::string> lines = {
+		line1, line2, line3, line4, line5, line6, line7
+	};
+
+	for(int i = 0; i < lines.size(); i++) {
+		int w = root->secondtextfont.getStringWidth(lines[i]);
+		root->secondtextfont.drawText(lines[i], centerx - w / 2, y);
+		y += linegap;
+	}
+
+	int titlew = root->textfont.getStringWidth(tabtitle);
+	root->titlefont.drawText(tabtitle, centerx - titlew / 1.25, titley);
 }
 
 void Options::contactSetup() {
 	contactlines.clear();
-
+	contactpanel.loadImage("UIasset/PNG/MainPanel03.png");
+	coexit.loadImage("button.png");
 	contactlines.push_back("E-Mail: contact@yourmail.com");
 	contactlines.push_back("X: x.com/youraccount");
 	contactlines.push_back("Instagram: instagram.com/youraccount");
@@ -53,14 +113,29 @@ void Options::contactSetup() {
 
 	contactlineh = root->secondtextfont.getStringHeight("y");
 
-	contactx = containerx + containerw * 0.08f;
+	copanelw = contactpanel.getWidth() * 2.4f;
+	copanelh = contactpanel.getHeight() * 2.4f;
+	copanelx = (getWidth() - copanelw) / 2;
+	copanely = (getHeight() - copanelh) / 3;
+	coexitw = coexit.getWidth() * 0.10;
+	coexith = coexit.getHeight() * 0.10;
+	coexitx = (copanelx + copanelw) - coexitw;
+	coexity = copanely;
+	contactx = containerx + containerw * 0.01f;
 	contacty = containery + containerh * 0.18f;
+
+	coexitbutton.set(coexitx, coexity, coexitx + coexitw, coexity + coexith);
+	coexitbuttonstate = BUTTON_NONE;
 }
 
 void Options::contactDraw() {
-	setColor(0, 0, 0);
-
 	float y = contacty;
+	contactpanel.draw(copanelx, copanely, copanelw, copanelh);
+	setColor(255, 255, 255);
+	if(coexitbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
+	if(coexitbuttonstate == BUTTON_PRESSED) setColor(pressedcolor);
+	coexit.draw(coexitx, coexity, coexitw, coexith);
+	setColor(255, 255, 255);
 
 	for(const auto& line : contactlines) {
 		root->secondtextfont.drawText(line, contactx, y);
@@ -122,9 +197,9 @@ void Options::mouseExited() {
 }
 
 void Options::windowResized(int w, int h) {
-    updateScale();
-    containerSetup();
-    tabSetup();
+//    updateScale();
+//   containerSetup();
+//    tabSetup();
 }
 
 void Options::showNotify() {
@@ -144,8 +219,6 @@ void Options::tabSetup() {
 	normalcolor.set(45, 50, 70);
 	pressedcolor.set(65, 70, 90);
 	focuscolor.set(55, 60, 80);
-	applyTabButtonSetup();
-	resetTabButtonSetup();
 	contactTabButtonSetup();
 	creditsTabButtonSetup();
 	returnSetup();
@@ -153,8 +226,6 @@ void Options::tabSetup() {
 
 void Options::tabDraw() {
 	setColor(normalcolor);
-	applyTabButtonDraw();
-	resetTabButtonDraw();
 	contactTabButtonDraw();
 	creditsTabButtonDraw();
 	returnDraw();
@@ -165,107 +236,76 @@ void Options::tabButtonPressed(int x, int y) {
 		returnbuttonstate = BUTTON_PRESSED;
 		returny += 2;
 	}
-
-	if(applytabbutton.contains(x, y)) {
-		applytabbuttonstate = BUTTON_PRESSED;
-	}
-
-	if(resettabbutton.contains(x, y)) {
-		resettabbuttonstate = BUTTON_PRESSED;
-	}
-
 	if(contactbutton.contains(x, y)) {
 		contactbuttonstate = BUTTON_PRESSED;
 	}
-
 	if(creditsbutton.contains(x, y)) {
 		creditsbuttonstate = BUTTON_PRESSED;
+	}
+
+	if(showcontactpanel && coexitbutton.contains(x, y)) {
+		coexitbuttonstate = BUTTON_PRESSED;
+	}
+	if(showcreditspanel && crexitbutton.contains(x, y)) {
+		crexitbuttonstate = BUTTON_PRESSED;
 	}
 }
 
 void Options::tabButtonReleased(int x, int y) {
-	if(applytabbutton.contains(x, y) && applytabbuttonstate == BUTTON_PRESSED) {
-		applytabbuttonstate = BUTTON_PERFORMED;
-		applyAudioSettings();
-		containerSetup();
-		tabSetup();
-	}
-
-	else if(resettabbutton.contains(x, y) && resettabbuttonstate == BUTTON_PRESSED) {
-		resettabbuttonstate = BUTTON_PERFORMED;
-		resetAudioSettings();
-	}
-
-	else if(returnhitbox.contains(x, y) && returnbuttonstate == BUTTON_PRESSED) {
+	if(returnhitbox.contains(x, y) && returnbuttonstate == BUTTON_PRESSED) {
 		returnbuttonstate = BUTTON_PERFORMED;
 		root->setCurrentCanvas(new MainMenuCanvas(root));
+		return;
 	}
-
-	else if(contactbutton.contains(x, y) && contactbuttonstate == BUTTON_PRESSED) {
+	if(contactbutton.contains(x, y) && contactbuttonstate == BUTTON_PRESSED) {
 		contactbuttonstate = BUTTON_PERFORMED;
-		showContactPanel = true;
+		showcontactpanel = true;
+		showcreditspanel = false;
+		return;
 	}
-
-	else if(creditsbutton.contains(x, y) && creditsbuttonstate == BUTTON_PRESSED) {
+	if(creditsbutton.contains(x, y) && creditsbuttonstate == BUTTON_PRESSED) {
 		creditsbuttonstate = BUTTON_PERFORMED;
-		root->setCurrentCanvas(new CreditsMenu(root));
+		showcreditspanel = true;
+		showcontactpanel = false;
+		return;
+	}
+	if(showcreditspanel && crexitbutton.contains(x, y) && crexitbuttonstate == BUTTON_PRESSED) {
+		gLogi("Options") << "Credits Kapatildi";
+		crexitbuttonstate = BUTTON_PERFORMED;
+		showcreditspanel = false;
+		return;
+	}
+	if(showcontactpanel && coexitbutton.contains(x, y) && coexitbuttonstate == BUTTON_PRESSED) {
+		gLogi("Options") << "Contact Kapatildi";
+		coexitbuttonstate = BUTTON_PERFORMED;
+		showcontactpanel = false;
+		return;
 	}
 
-	else {
-		applytabbuttonstate = BUTTON_CANCELED;
-		resettabbuttonstate = BUTTON_CANCELED;
-		returnbuttonstate= BUTTON_CANCELED;
-		contactbuttonstate = BUTTON_CANCELED;
-		creditsbuttonstate= BUTTON_CANCELED;
-	}
+	returnbuttonstate  = BUTTON_CANCELED;
+	contactbuttonstate = BUTTON_CANCELED;
+	creditsbuttonstate = BUTTON_CANCELED;
+	coexitbuttonstate  = BUTTON_CANCELED;
+	crexitbuttonstate  = BUTTON_CANCELED;
 }
 
 void Options::tabButtonFocus(int x, int y) {
-	if(applytabbuttonstate != BUTTON_PRESSED) {
-		if(applytabbutton.contains(x, y)) {
-			applytabbuttonstate = BUTTON_FOCUS;
-		}
-		else {
-			applytabbuttonstate = BUTTON_NONE;
-		}
-	}
-
-	if(resettabbuttonstate != BUTTON_PRESSED) {
-		if(resettabbutton.contains(x, y)) {
-			resettabbuttonstate = BUTTON_FOCUS;
-		}
-		else {
-			resettabbuttonstate = BUTTON_NONE;
-		}
-	}
-
 	if(returnbuttonstate != BUTTON_PRESSED) {
-		if(returnhitbox.contains(x, y)) {
-			returnbuttonstate = BUTTON_FOCUS;
-		}
-		else {
-			returnbuttonstate = BUTTON_NONE;
-		}
+		returnbuttonstate = returnhitbox.contains(x, y) ? BUTTON_FOCUS : BUTTON_NONE;
 	}
-
 	if(contactbuttonstate != BUTTON_PRESSED) {
-		if(contactbutton.contains(x, y)) {
-			contactbuttonstate = BUTTON_FOCUS;
-		}
-		else {
-			contactbuttonstate = BUTTON_NONE;
-		}
+		contactbuttonstate = contactbutton.contains(x, y) ? BUTTON_FOCUS : BUTTON_NONE;
 	}
-
 	if(creditsbuttonstate != BUTTON_PRESSED) {
-		if(creditsbutton.contains(x, y)) {
-			creditsbuttonstate = BUTTON_FOCUS;
-		}
-		else {
-			creditsbuttonstate = BUTTON_NONE;
-		}
+		creditsbuttonstate = creditsbutton.contains(x, y) ? BUTTON_FOCUS : BUTTON_NONE;
 	}
 
+	if(showcontactpanel && coexitbuttonstate != BUTTON_PRESSED) {
+		coexitbuttonstate = coexitbutton.contains(x, y) ? BUTTON_FOCUS : BUTTON_NONE;
+	}
+	if(showcreditspanel && crexitbuttonstate != BUTTON_PRESSED) {
+		crexitbuttonstate = crexitbutton.contains(x, y) ? BUTTON_FOCUS : BUTTON_NONE;
+	}
 }
 
 void Options::containerSetup() {
@@ -290,30 +330,24 @@ void Options::containerSetup() {
 	containery = (height - containerh) / 2;
 
 	containercolor.set(255, 255, 255);
-	gameSettingsSetup();
-}
-
-void Options::gameSettingsSetup() {
-	musictickSetup();
-	fxtickSetup();
+	audioSettingsSetup();
 }
 
 void Options::containerDraw() {
 	setColor(containercolor);
 	backgroundimg.draw(containerx, containery, containerw, containerh);
-	gameSettingsDraw();
+	audioSettingsDraw();
 	setColor(255, 255, 255);
 }
 
-void Options::gameSettingsDraw() {
-	musictickDraw();
-	fxtickDraw();
-}
-
-void Options::graphicsSettingsDraw() {
+void Options::audioSettingsSetup() {
+	musictickSetup();
+	fxtickSetup();
 }
 
 void Options::audioSettingsDraw() {
+	musictickDraw();
+	fxtickDraw();
 }
 
 void Options::containerButtonPressed(int x, int y) {
@@ -326,22 +360,6 @@ void Options::containerButtonReleased(int x, int y) {
 
 void Options::containerButtonFocus(int x, int y) {
 	audioSettingsFocus(x, y);
-}
-
-void Options::gameSettingsPressed(int x, int y) {
-}
-
-void Options::gameSettingsReleased(int x, int y) {
-}
-
-void Options::gameSettingsFocus(int x, int y) {
-}
-
-
-void Options::graphicsSettingsPressed(int x, int y) {
-}
-
-void Options::graphicsSettingsReleased(int x, int y) {
 }
 
 void Options::audioSettingsPressed(int x, int y) {
@@ -358,10 +376,16 @@ void Options::audioSettingsReleased(int x, int y) {
 	if(musicbuttonhitbox.contains(x, y) && musictickstate == BUTTON_PRESSED) {
 	    musictickstate = BUTTON_PERFORMED;
 	    ismusicenabled = !ismusicenabled;
+		applyAudioSettings();
+		containerSetup();
+		tabSetup();
 	}
 	else if(fxbuttonhitbox.contains(x, y) && fxtickstate == BUTTON_PRESSED) {
 	    fxtickstate = BUTTON_PERFORMED;
 	    isfxenabled = !isfxenabled;
+		applyAudioSettings();
+		containerSetup();
+		tabSetup();
 	}
 	else {
 		musictickstate = BUTTON_CANCELED;
@@ -390,27 +414,7 @@ void Options::returnDraw() {
 	if(returnbuttonstate == BUTTON_PRESSED) setColor(pressedcolor);
 	returnimg.draw(returnx, returny - 40, 200, 50);
 	root->titlefont.drawText(returntext, returnx, returny);
-	setColor(0, 0, 0);
-}
-
-void Options::applyTabButtonSetup() {
-	applytabtext = "APPLY";
-	applytabbuttonstate = BUTTON_NONE;
-	applytabbuttonh = tabh;
-	applytabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	applytabbuttonx = containerx;
-	applytabbuttony = containery + containerh - applytabbuttonh - (containerh * 0.05) + 30;
-	applytabbutton.set(applytabbuttonx, applytabbuttony, applytabbuttonx + applytabbuttonw, applytabbuttony + applytabbuttonh);
-}
-
-void Options::resetTabButtonSetup() {
-	resettabtext = "RESET";
-	resettabbuttonstate = BUTTON_NONE;
-	resettabbuttonh = tabh;
-	resettabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	resettabbuttonx = applytabbuttonx + applytabbuttonw + (tabw * 0.085);
-	resettabbuttony = applytabbuttony;
-	resettabbutton.set(resettabbuttonx, resettabbuttony, resettabbuttonx + resettabbuttonw, resettabbuttony + resettabbuttonh);
+	setColor(255, 255, 255);
 }
 
 void Options::contactTabButtonSetup() {
@@ -418,8 +422,8 @@ void Options::contactTabButtonSetup() {
 	contactbuttonstate = BUTTON_NONE;
 	contacttabbuttonh = tabh;
 	contacttabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	contacttabbuttonx = containerx;
-	contacttabbuttony = containery;
+	contacttabbuttonx = containerx + (containerw * 0.10);
+	contacttabbuttony = containery + 250;
 	contactbutton.set(contacttabbuttonx, contacttabbuttony, contacttabbuttonx + contacttabbuttonw, contacttabbuttony + contacttabbuttonh);
 }
 
@@ -428,36 +432,9 @@ void Options::creditsTabButtonSetup() {
 	creditsbuttonstate = BUTTON_NONE;
 	creditstabbuttonh = tabh;
 	creditstabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	creditstabbuttonx = contacttabbuttonx + contacttabbuttonw + (tabw * 0.085);
-	creditstabbuttony = contacttabbuttony;
+	creditstabbuttonx = containerx + (containerw * 0.10);
+	creditstabbuttony = contacttabbuttony + 75;
 	creditsbutton.set(creditstabbuttonx, creditstabbuttony, creditstabbuttonx + creditstabbuttonw, creditstabbuttony + creditstabbuttonh);
-}
-
-
-void Options::applyTabButtonDraw() {
-	if(applytabbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(applytabbuttonstate == BUTTON_PRESSED || applytabbuttonstate == BUTTON_PERFORMED || activetab == TAB_APPLY) setColor(pressedcolor);
-	applyimg.draw(applytabbuttonx, applytabbuttony, applytabbuttonw, applytabbuttonh);
-	tabfontw = root->secondtextfont.getStringWidth(applytabtext);
-	tabfonth = root->secondtextfont.getStringHeight(applytabtext);
-	tabfontx = applytabbuttonx + (applytabbuttonw - tabfontw) / 2;
-	tabfonty = applytabbuttony + (applytabbuttonh + tabfonth) / 2;
-	setColor(255, 255, 255);
-	root->thirdtextfont.drawText(applytabtext, tabfontx, tabfonty);
-	setColor(normalcolor);
-}
-
-void Options::resetTabButtonDraw() {
-	if(resettabbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(resettabbuttonstate == BUTTON_PRESSED || resettabbuttonstate == BUTTON_PERFORMED || activetab == TAB_RESET) setColor(pressedcolor);
-	resetimg.draw(resettabbuttonx, resettabbuttony, resettabbuttonw, resettabbuttonh);
-	tabfontw = root->secondtextfont.getStringWidth(resettabtext);
-	tabfonth = root->secondtextfont.getStringHeight(resettabtext);
-	tabfontx = resettabbuttonx + (resettabbuttonw - tabfontw) / 2;
-	tabfonty = resettabbuttony + (resettabbuttonh + tabfonth) / 2;
-	setColor(255, 255, 255);
-	root->thirdtextfont.drawText(resettabtext, tabfontx, tabfonty);
-	setColor(normalcolor);
 }
 
 void Options::contactTabButtonDraw() {
@@ -523,34 +500,23 @@ void Options::fxtickSetup() {
 }
 
 void Options::musictickDraw() {
-	setColor(0, 0, 0);
 	root->secondtextfont.drawText(musictext, musictextx, musictexty);
 	musicuncheck.draw(musicuncheckx, musicunchecky, musicuncheckw, musicuncheckh);
 	if(ismusicenabled) {
 		setColor(255, 255, 255);
 		musiccheck.draw(musicuncheckx, musicunchecky, musiccheckw, musiccheckh);
 	}
-	setColor(0, 0, 0);
 }
 
 void Options::fxtickDraw() {
-	setColor(0, 0, 0);
 	root->secondtextfont.drawText(fxtext, fxtextx, fxtexty);
 	fxuncheck.draw(fxuncheckx, fxunchecky, fxuncheckw, fxuncheckh);
 	if(isfxenabled) {
 		setColor(255, 255, 255);
 		fxcheck.draw(fxuncheckx, fxunchecky, fxcheckw, fxcheckh);
 	}
-	setColor(0, 0, 0);
 }
 
 void Options::applyAudioSettings() {
 	root->saveAudioSettings(isfxenabled, ismusicenabled);
-}
-
-void Options::resetAudioSettings() {
-	isfxenabled = root->getSound();
-	ismusicenabled = root->getMusic();
-	containerSetup();
-	tabSetup();
 }

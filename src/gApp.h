@@ -32,25 +32,14 @@ public:
 	generalkey = "general", videokey = "video", audiokey = "audio", controlskey = "controls", applykey = "apply", resetkey = "reset", contactkey = "contact",
 	generallabelkey = ".";
 	void drawMenuBackground(int w, int h);
-	std::string localizeWord(std::string word);
 
 	void saveAudioSettings(int sound, int music);
 	void saveHighScore(int highscore);
 
-	void loadGameSettings();
-	void loadGraphicsSettings();
 	void loadAudioSettings();
 	void loadHighScore();
 
-	void applyGameSettings();
-	void applyControlsSettings();
-	void applyGraphicsSettings();
 	void applyAudioSettings();
-
-	void resetGameSettings();
-	void resetControlsSettings();
-	void resetGraphicsSettings();
-	void resetAudioSettings();
 
 	void playMenuMusic();
 	void stopMenuMusic();

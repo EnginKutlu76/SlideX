@@ -43,7 +43,7 @@ private:
 	gApp* root;
 
 	static const int  BUTTON_NONE = 0, BUTTON_PRESSED = 1, BUTTON_CANCELED = -1, BUTTON_PERFORMED = 2, BUTTON_FOCUS = 3;
-	static const int TAB_NONE = 0, TAB_GAME = 1, TAB_CONTROLS = 2, TAB_GRAPHICS = 3, TAB_AUDIO = 4, TAB_APPLY = 5, TAB_RESET = 6, TAB_CONTACT = 7, TAB_CREDITS = 8;
+	static const int TAB_NONE = 0, TAB_GAME = 1, TAB_CONTROLS = 2, TAB_GRAPHICS = 3, TAB_AUDIO = 4, TAB_APPLY = 5, TAB_CONTACT = 7, TAB_CREDITS = 8;
 	static const int keynum = 7;
 
 	//tab funcs
@@ -60,24 +60,6 @@ private:
 	void containerButtonReleased(int x, int y);
 	void containerButtonFocus(int x, int y);
 
-	//game funcs
-	void gameTabButtonSetup();
-	void gameTabButtonDraw();
-	void gameSettingsSetup();
-	void gameSettingsPressed(int x, int y);
-	void gameSettingsReleased(int x, int y);
-	void gameSettingsFocus(int x, int y);
-	void gameSettingsDraw();
-
-	//graphics funcs
-	void graphicsTabButtonSetup();
-	void graphicsTabButtonDraw();
-	void graphicsSettingsSetup();
-	void graphicsSettingsPressed(int x, int y);
-	void graphicsSettingsReleased(int x, int y);
-	void graphicsSettingsFocus(int x, int y);
-	void graphicsSettingsDraw();
-
 	//audio funcs
 	void audioTabButtonSetup();
 	void audioTabButtonDraw();
@@ -91,14 +73,7 @@ private:
 	void musictickDraw();
 	void fxtickDraw();
 
-	//apply&reset funcs
-	void applyTabButtonSetup();
-	void resetTabButtonSetup();
-	void applyTabButtonDraw();
-	void resetTabButtonDraw();
-
 	void applyAudioSettings();
-	void resetAudioSettings();
 
 	//return funcs
 	void returnSetup();
@@ -109,21 +84,23 @@ private:
 	void creditsTabButtonSetup();
 	void contactTabButtonDraw();
 	void creditsTabButtonDraw();
-	void contactSetup();
-	void contactDraw();
-	//void refreshHitboxes();
+	void repositionAll();
 	//void loadAssets();
 
+	void contactSetup();
+	void contactDraw();
+
+	void creditsSetup();
+	void creditsDraw();
+
 	//tabs
-	gRect gametabbutton, graphicstabbutton, audiotabbutton, applytabbutton, resettabbutton, contactbutton, creditsbutton;
-	std::string gametabtext, graphicstabtext, audiotabtext, applytabtext, resettabtext, contacttext, creditstext;
-	int gametabbuttonstate, graphicstabbuttonstate, audiotabbuttonstate, applytabbuttonstate, resettabbuttonstate, contactbuttonstate, creditsbuttonstate;
+	gRect gametabbutton, graphicstabbutton, audiotabbutton, contactbutton, creditsbutton;
+	std::string gametabtext, graphicstabtext, audiotabtext, contacttext, creditstext;
+	int gametabbuttonstate, graphicstabbuttonstate, audiotabbuttonstate, contactbuttonstate, creditsbuttonstate;
 
 	int gametabbuttonx, gametabbuttony, gametabbuttonw, gametabbuttonh;
 	int graphicstabbuttonx, graphicstabbuttony, graphicstabbuttonw, graphicstabbuttonh;
 	int audiotabbuttonx, audiotabbuttony, audiotabbuttonw, audiotabbuttonh;
-	int applytabbuttonx, applytabbuttony, applytabbuttonw, applytabbuttonh;
-	int resettabbuttonx, resettabbuttony, resettabbuttonw, resettabbuttonh;
 	int contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh;
 	int creditstabbuttonx, creditstabbuttony, creditstabbuttonw, creditstabbuttonh;
 	int tabfontx, tabfonty, tabfontw, tabfonth;
@@ -177,14 +154,31 @@ private:
 	gImage returnimg;
 	gImage applyimg;
 	gImage resetimg;
+
+
 	gImage contactimg;
-	gImage creditsimg;
-
-	bool showContactPanel = false;
-
+	gImage contactpanel;
+	gImage coexit;
+	gRect coexitbutton;
+	int coexitbuttonstate;
+	int copanelx, copanely, copanelw, copanelh;
+	int coexitx, coexity, coexitw, coexith;
 	std::vector<std::string> contactlines;
 	float contactlineh;
 	float contactx, contacty;
+	bool showcontactpanel = false;
+
+	gImage creditsimg;
+	gImage creditspanel;
+	gImage crexit;
+	gRect crexitbutton;
+	int crexitbuttonstate;
+	int crpanelx, crpanely, crpanelw, crpanelh;
+	int crexitx, crexity, crexitw, crexith;
+	bool showcreditspanel = false;
+
+	std::string line1, line2, line3, line4, line5, line6, line7;
+	int centerx, starty, linegap;
 };
 
 #endif /* SRC_OPTIONS_H_ */
