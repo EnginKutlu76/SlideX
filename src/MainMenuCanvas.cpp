@@ -7,7 +7,6 @@
 
 #include <MainMenuCanvas.h>
 #include "gCanvas.h"
-#include "CreditsMenu.h"
 #include "Options.h"
 
 MainMenuCanvas::MainMenuCanvas(gApp* root) : gBaseCanvas(root) {

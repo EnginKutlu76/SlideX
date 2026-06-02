@@ -108,7 +108,6 @@ set(GlistApp_SOURCES
 		${APP_DIR}/src/gApp.cpp
 		${APP_DIR}/src/gCanvas.cpp
 		${APP_DIR}/src/MainMenuCanvas.cpp
-		${APP_DIR}/src/CreditsMenu.cpp
 		${APP_DIR}/src/Options.cpp
 )
 
@@ -116,7 +115,6 @@ set(GlistApp_HEADERS
 		${APP_DIR}/src/gApp.h
 		${APP_DIR}/src/gCanvas.h
 		${APP_DIR}/src/MainMenuCanvas.h
-		${APP_DIR}/src/CreditsMenu.h
 		${APP_DIR}/src/Options.h
 )
 

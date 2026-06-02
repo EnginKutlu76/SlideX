@@ -9,7 +9,6 @@
 #include <algorithm>
 #include "gCanvas.h"
 #include "MainMenuCanvas.h"
-#include "CreditsMenu.h"
 
 Options::Options(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
