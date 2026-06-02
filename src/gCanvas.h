@@ -154,8 +154,10 @@ private:
 
 	//gui
 	gImage resumepanel;
+	gImage overpanel;
 	gImage mainmbutton;
 	gImage continuebutton;
+	gImage restartbutton;
 	bool resumepanelshown;
 	int rpx, rpy, rpw, rph;
 	int scorepanelx, scorepanely;

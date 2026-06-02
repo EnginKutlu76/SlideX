@@ -49,6 +49,10 @@ void gCanvas::update() {
 
 	timingUpdate();
 
+	if(gamestate != GAMESTATE_PLAY) {
+		return;
+	}
+
 	if(gamestate == GAMESTATE_PAUSE) {
 		return;
 	}
@@ -133,7 +137,7 @@ void gCanvas::collision() {
 
 		if(dz < 3.0f) {
 			if(rows[i].cell[lane][layer]) {
-				gamestate = GAMESTATE_PAUSE;
+				gamestate = GAMESTATE_GAMEOVER;
 				return;
 			}
 		}
@@ -315,8 +319,10 @@ void gCanvas::scoreDraw() {
 
 void gCanvas::guiSetup() {
 	resumepanel.loadImage("dialogue_pause.png");
+	overpanel.loadImage("dialogue_gameover.png");
 	mainmbutton.loadImage("button_mainmenu.png");
 	continuebutton.loadImage("button_continue.png");
+	restartbutton.loadImage("button_replay.png");
 
 	rpw = resumepanel.getWidth();
 	rph = resumepanel.getHeight();
@@ -419,8 +425,9 @@ void gCanvas::fpsDraw() {
 	root->secondtextfont.drawText(fpsBuffer, fpscounterx, fpscountery);
 
 }
+
 void gCanvas::guiDraw() {
-	if(gamestate != GAMESTATE_PAUSE) return;
+	if(gamestate != GAMESTATE_PAUSE && gamestate != GAMESTATE_GAMEOVER) return;
 	if(isresuming) return;
 
 	setColor(0, 0, 0, 180);
@@ -428,7 +435,16 @@ void gCanvas::guiDraw() {
 
 	setColor(255, 255, 255);
 
-	resumepanel.draw(rpx, rpy);
+	if(gamestate == GAMESTATE_PAUSE) {
+		resumepanel.draw(rpx, rpy);
+
+		continuebutton.draw(leftbx, leftby);
+	}
+	else if(gamestate == GAMESTATE_GAMEOVER) {
+		overpanel.draw(rpx, rpy);
+
+		restartbutton.draw(leftbx, leftby);
+	}
 
 	root->secondtextfont.drawText(
 		"SCORE : " + gToStr(score),
@@ -442,9 +458,9 @@ void gCanvas::guiDraw() {
 		rpy + 200
 	);
 
-	setColor(255, 255, 255);
-	continuebutton.draw(leftbx, leftby);
 	mainmbutton.draw(rightbx, rightby);
+
+	setColor(255, 255, 255);
 }
 
 void gCanvas::keyPressed(int key) {
@@ -574,7 +590,6 @@ void gCanvas::mousePressed(int x, int y, int button) {
 }
 
 void gCanvas::mouseReleased(int x, int y, int button) {
-//	gLogi("gCanvas") << "mouseReleased" << ", button:" << button;
 	if(gamestate == GAMESTATE_GAMEOVER) {
 		if(x >= leftbx && x < leftbx + leftbw && y >= leftby && y < leftby + leftbh) {
 			gCanvas* cnv = new gCanvas(root);
@@ -582,21 +597,22 @@ void gCanvas::mouseReleased(int x, int y, int button) {
 			return;
 		}
 	}
+
 	if(gamestate == GAMESTATE_PAUSE) {
 		if(x >= leftbx && x < leftbx + leftbw && y >= leftby && y < leftby + leftbh) {
-//			gamestate = GAMESTATE_PLAY;
 			isresuming = true;
 			resumetimer = 3.0f;
 		}
 	}
 
-	if(gamestate == GAMESTATE_GAMEOVER || /*gamestate == GAMESTATE_WIN ||*/ gamestate == GAMESTATE_PAUSE) {
+	if(gamestate == GAMESTATE_GAMEOVER || gamestate == GAMESTATE_PAUSE) {
 		if(x >= rightbx && x < rightbx + rightbw && y >= rightby && y < rightby + rightbh) {
 			MainMenuCanvas* cnv = new MainMenuCanvas(root);
 			root->setCurrentCanvas(cnv);
 			return;
 		}
 	}
+
 	if(resumepanelshown) return;
 }
 
