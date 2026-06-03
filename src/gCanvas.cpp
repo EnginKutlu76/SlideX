@@ -20,6 +20,16 @@ gCanvas::~gCanvas() {
 }
 
 void gCanvas::setup() {
+	std::vector<std::string> texturepaths;
+	texturepaths.push_back("space/right.jpg");
+	texturepaths.push_back("space/left.jpg");
+	texturepaths.push_back("space/top.jpg");
+	texturepaths.push_back("space/bottom.jpg");
+	texturepaths.push_back("space/right.jpg");
+	texturepaths.push_back("space/back.jpg");
+	sky.loadTextures(texturepaths);
+	sky.pan(PI / 3);
+
 	tex.loadTexture("ss.jpg");
 	mat.setDiffuseMap(&tex);
 	player.setMaterial(&mat);
@@ -59,6 +69,11 @@ void gCanvas::setup() {
 }
 
 void gCanvas::update() {
+	sky.setPosition(
+		0,
+		0,
+		player.getPosZ() + 20.0f
+	);
 
 	if(root->getSound() == 1) {
 		jumpsound.setVolume(0.5f);
@@ -134,6 +149,7 @@ void gCanvas::draw() {
 	planeDraw();
 	obstacleDraw();
 	setColor((int)color.r, (int)color.g, (int)color.b);
+	sky.draw();
 	player.draw();
 	setColor(255, 255, 255);
 	disabling();
@@ -311,8 +327,9 @@ void gCanvas::controlSetup() {
 }
 
 void gCanvas::controlUpdate() {
-	if(isdownfall)
+	if(isdownfall) {
 	    velocityy += GRAVITY * 2.5f;
+		downfall.play(); }
 	else
 	    velocityy += GRAVITY;
 	if(speed > maxspeed) {
@@ -371,6 +388,9 @@ void gCanvas::controlUpdate() {
 }
 
 void gCanvas::planeSetup() {
+	planetex.loadTexture("aa.jpg");
+	planemat.setDiffuseMap(&planetex);
+
 	for(int i = 0; i < 8; i++) {
 		plane.push_back(plane1);
 	}
@@ -384,6 +404,7 @@ void gCanvas::planeSetup() {
 			0,
 			i * -80
 		);
+		plane[i].setMaterial(&planemat);
 	}
 
 	lastplanez = plane.back().getPosZ();

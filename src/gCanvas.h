@@ -23,6 +23,7 @@
 #include "Obstacle.h"
 #include "GameState.h"
 #include "gSound.h"
+#include "gSkybox.h"
 
 class gCanvas : public gBaseCanvas {
 public:
@@ -189,6 +190,9 @@ private:
 	gTexture tex;
 	gMaterial mat;
 
+	gTexture planetex;
+	gMaterial planemat;
+
 	gSound jumpsound, bestscore, countdown, death, doublejump, downfall, leftright, menubuttons, passobstacle, scoresound, optionsound;
 
 	//audio settings
@@ -209,6 +213,8 @@ private:
 	int fxcheckw, fxcheckh;
 	int fxtickstate;
 	bool isfxenabled;
+
+	gSkybox sky;
 };
 
 #endif /* GCANVAS_H_ */
