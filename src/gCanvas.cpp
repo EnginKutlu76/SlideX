@@ -494,16 +494,10 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_D;
 		if(linestate == LINE_MID) {
 			linestate = LINE_RIGHT;
-			player.tilt(60.0f);
 			linelocation = 3;
-			gLogi("line") << "you in line right";
 		} else if (linestate == LINE_LEFT) {
 			linestate = LINE_MID;
-			player.tilt(60.0f);
 			linelocation = 0;
-			gLogi("line") << "you in line mid";
-		} else {
-			gLogi("line") << "you already in line right";
 		}
 		break;
 
@@ -511,19 +505,14 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_A;
 		if(linestate == LINE_MID) {
 			linestate = LINE_LEFT;
-			player.tilt(-60.0f);
 			linelocation = -3;
-			gLogi("line") << "you in line left";
 		} else if (linestate == LINE_RIGHT) {
 			linestate = LINE_MID;
-			player.tilt(-60.0f);
 			linelocation = 0;
-			gLogi("line") << "you in line mid";
-		} else {
-			gLogi("line") << "you already in line left";
 		}
 		break;
-		case G_KEY_ESC:
+
+	case G_KEY_ESC:
 		if(gamestate == GAMESTATE_PLAY) {
 			gamestate = GAMESTATE_PAUSE;
 		}
