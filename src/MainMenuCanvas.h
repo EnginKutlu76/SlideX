@@ -13,6 +13,7 @@
 #include "gFont.h"
 #include "gImage.h"
 #include "gFont.h"
+#include "gSound.h"
 
 class MainMenuCanvas: public gBaseCanvas {
 public:
@@ -78,6 +79,7 @@ private:
 	gColor pressedcolor, normalcolor, focuscolor;
 	//gImage startlogo, optionslogo, contactlogo, creditslogo;
 	//std::unique_ptr<Fade> fadeeffect;
+	gSound buttonsound;
 };
 
 #endif /* SRC_MAINMENUCANVAS_H_ */

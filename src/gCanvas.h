@@ -22,6 +22,7 @@
 #include "UiManager.h"
 #include "Obstacle.h"
 #include "GameState.h"
+#include "gSound.h"
 
 class gCanvas : public gBaseCanvas {
 public:
@@ -48,6 +49,7 @@ public:
 	void hideNotify();
 
 private:
+	static const int  BUTTON_NONE = 0, BUTTON_PRESSED = 1, BUTTON_CANCELED = -1, BUTTON_PERFORMED = 2, BUTTON_FOCUS = 3;
 	static const int KEY_NONE = 0, KEY_W = 1, KEY_S = 2, KEY_D = 4, KEY_A = 8, KEY_E = 16, KEY_R = 32, KEY_Z = 64, KEY_X = 128, KEY_ESC = 256;
 	static const int LINE_LEFT = 0, LINE_MID = 1, LINE_RIGHT = 2;
 
@@ -107,6 +109,12 @@ private:
 	void updatePlayState();
 	void updatePauseState();
 	void updateGameOverState();
+
+	void musictickSetup();
+	void fxtickSetup();
+	void musictickDraw();
+	void fxtickDraw();
+	void applyAudioSettings();
 
 	gApp* root;
 
@@ -180,6 +188,27 @@ private:
 
 	gTexture tex;
 	gMaterial mat;
+
+	gSound jumpsound, bestscore, countdown, death, doublejump, downfall, leftright, menubuttons, passobstacle, scoresound, optionsound;
+
+	//audio settings
+	gImage musicuncheck, musiccheck;
+	gRect musicbuttonhitbox;
+	std::string musictext;
+	int musictextx, musictexty, musictextw, musictexth;
+	int musicuncheckx, musicunchecky, musicuncheckw, musicuncheckh;
+	int musiccheckw, musiccheckh;
+	int musictickstate;
+	bool ismusicenabled;
+
+	gImage fxuncheck, fxcheck;
+	gRect fxbuttonhitbox;
+	std::string fxtext;
+	int fxtextx, fxtexty, fxtextw, fxtexth;
+	int fxuncheckx, fxunchecky, fxuncheckw, fxuncheckh;
+	int fxcheckw, fxcheckh;
+	int fxtickstate;
+	bool isfxenabled;
 };
 
 #endif /* GCANVAS_H_ */

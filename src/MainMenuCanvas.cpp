@@ -19,6 +19,7 @@ MainMenuCanvas::~MainMenuCanvas() {
 
 void MainMenuCanvas::setup() {
 	//background.loadImage("black.png");
+	buttonsound.loadSound("effectsound/menubuttons.wav");
 	logoSetup();
 	startSetup();
 	optionSetup();
@@ -26,6 +27,8 @@ void MainMenuCanvas::setup() {
 }
 
 void MainMenuCanvas::update() {
+	if(root->getSound() == 1) buttonsound.setVolume(0.5f);
+	if(root->getSound() == 0) buttonsound.setVolume(0.0f);
 }
 
 void MainMenuCanvas::draw() {
@@ -204,6 +207,7 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 	if(starthitbox.contains(x, y) && startstate == BUTTON_PRESSED) {
 		startstate = BUTTON_PERFORMED;
 		starty -= 2;
+		buttonsound.play();
 		//root->gamestate = root->GAME_LOAD;
 		root->setCurrentCanvas(new gCanvas(root));
 	}
@@ -211,6 +215,7 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 	else if(optionhitbox.contains(x, y) && optionstate == BUTTON_PRESSED) {
 		optionstate = BUTTON_PERFORMED;
 		optiony -=2;
+		buttonsound.play();
 		root->setCurrentCanvas(new Options(root));
 	}
 

@@ -23,6 +23,17 @@ void gCanvas::setup() {
 	tex.loadTexture("ss.jpg");
 	mat.setDiffuseMap(&tex);
 	player.setMaterial(&mat);
+	jumpsound.loadSound("effectsound/jumping.wav");
+	bestscore.loadSound("effectsound/bestscore.wav");
+	countdown.loadSound("effectsound/countdown.wav");
+	death.loadSound("effectsound/death.wav");
+	doublejump.loadSound("effectsound/doublejump.wav");
+	downfall.loadSound("effectsound/downfall.wav");
+	leftright.loadSound("effectsound/leftright.wav");
+	menubuttons.loadSound("effectsound/menubuttons.wav");
+	passobstacle.loadSound("effectsound/passobstacle.wav");
+	scoresound.loadSound("effectsound/score.wav");
+	optionsound.loadSound("effectsound/optionbuttons.wav");
 
 	gamestate = GAMESTATE_PLAY;
 	keystate = KEY_NONE;
@@ -43,9 +54,39 @@ void gCanvas::setup() {
 	controlSetup();
 	timingSetup();
 	camSetup();
+	musictickSetup();
+	fxtickSetup();
 }
 
 void gCanvas::update() {
+
+	if(root->getSound() == 1) {
+		jumpsound.setVolume(0.5f);
+		bestscore.setVolume(0.5f);
+		countdown.setVolume(0.5f);
+		death.setVolume(0.5f);
+		doublejump.setVolume(0.2f);
+		downfall.setVolume(0.5f);
+		leftright.setVolume(0.2f);
+		menubuttons.setVolume(0.5f);
+		passobstacle.setVolume(0.5f);
+		scoresound.setVolume(0.5f);
+		optionsound.setVolume(0.5f);
+	}
+
+	if(root->getSound() == 0) {
+		jumpsound.setVolume(0.0f);
+		bestscore.setVolume(0.0f);
+		countdown.setVolume(0.0f);
+		death.setVolume(0.0f);
+		doublejump.setVolume(0.0f);
+		downfall.setVolume(0.0f);
+		leftright.setVolume(0.0f);
+		menubuttons.setVolume(0.0f);
+		passobstacle.setVolume(0.0f);
+		scoresound.setVolume(0.0f);
+		optionsound.setVolume(0.0f);
+	}
 
 	timingUpdate();
 
@@ -115,6 +156,64 @@ void gCanvas::draw() {
 	guiDraw();
 }
 
+void gCanvas::applyAudioSettings() {
+	root->saveAudioSettings(isfxenabled, ismusicenabled);
+}
+
+void gCanvas::musictickSetup() {
+	musictext = "Music";
+	musicuncheck.loadImage("UIasset/PNG/button02.png");
+	musiccheck.loadImage("check-markred.png");
+	musictextw = root->secondtextfont.getStringWidth(musictext);
+	musictexth = root->secondtextfont.getStringHeight(musictext);
+	musictextx = rpx + (resumepanel.getWidth() * 0.10);
+	musictexty = rpy + resumepanel.getHeight() / 1.5;
+	musicuncheckw = musicuncheck.getWidth() * 0.5;
+	musicuncheckh = musicuncheck.getHeight() * 0.5;
+	musicuncheckx = rpx + (musictextw * 2);
+	musicunchecky = musictexty - (musictexth / 2) - (musicuncheckh / 2) + 3;
+	musiccheckw = musiccheck.getWidth() * 0.06;
+	musiccheckh = musiccheck.getHeight() * 0.06;
+	musicbuttonhitbox.set(musicuncheckx, musicunchecky, musicuncheckx + musicuncheckw, musicunchecky + musicuncheckh);
+	ismusicenabled = root->getMusic();
+}
+
+void gCanvas::fxtickSetup() {
+	fxtext = "FX Sound";
+	fxuncheck.loadImage("UIasset/PNG/button02.png");
+	fxcheck.loadImage("check-markred.png");
+	fxtextw = root->secondtextfont.getStringWidth(fxtext);
+	fxtexth = root->secondtextfont.getStringHeight(fxtext);
+	fxtextx = rpx + (resumepanel.getWidth() * 0.10);
+	fxtexty = musictexty + (resumepanel.getHeight() / 8);
+	fxuncheckw = fxuncheck.getWidth() * 0.5;
+	fxuncheckh = fxuncheck.getHeight() * 0.5;
+	fxuncheckx = rpx + (fxtextw * 1.5);
+	fxunchecky = fxtexty - (fxtexth / 2) - (fxuncheckh / 2) + 3;
+	fxcheckw = fxcheck.getWidth() * 0.06;
+	fxcheckh = fxcheck.getHeight() * 0.06;
+	fxbuttonhitbox.set(fxuncheckx, fxunchecky, fxuncheckx + fxuncheckw, fxunchecky + fxuncheckh);
+	isfxenabled = root->getSound();
+}
+
+void gCanvas::musictickDraw() {
+	root->secondtextfont.drawText(musictext, musictextx, musictexty);
+	musicuncheck.draw(musicuncheckx, musicunchecky, musicuncheckw, musicuncheckh);
+	if(ismusicenabled) {
+		setColor(255, 255, 255);
+		musiccheck.draw(musicuncheckx, musicunchecky, musiccheckw, musiccheckh);
+	}
+}
+
+void gCanvas::fxtickDraw() {
+	root->secondtextfont.drawText(fxtext, fxtextx, fxtexty);
+	fxuncheck.draw(fxuncheckx, fxunchecky, fxuncheckw, fxuncheckh);
+	if(isfxenabled) {
+		setColor(255, 255, 255);
+		fxcheck.draw(fxuncheckx, fxunchecky, fxcheckw, fxcheckh);
+	}
+}
+
 void gCanvas::updatePlayState() {
 
 }
@@ -138,6 +237,8 @@ void gCanvas::collision() {
 		if(dz < 3.0f) {
 			if(rows[i].cell[lane][layer]) {
 				gamestate = GAMESTATE_GAMEOVER;
+				death.play();
+				//death.stop();
 				return;
 			}
 		}
@@ -175,6 +276,9 @@ void gCanvas::timingUpdate() {
 		if(resumetimer <= 0.0f) {
 			isresuming = false;
 			gamestate = GAMESTATE_PLAY;
+		}
+		for(int i = 0; i < resumetimer; i++) {
+			countdown.play();
 		}
 
 		return;
@@ -252,11 +356,13 @@ void gCanvas::controlUpdate() {
 	}
 
 	if(isjumping) {
+		jumpsound.play();
 		player.tilt(6.0f);
 		player.setScale(0.8f, 0.8f, 0.8f);
 		jumprotation += 6.0f;
 
 		if(jumprotation >= 90.0f) {
+			jumpsound.stop();
 			player.tilt(-jumprotation);
 			jumprotation = 0.0f;
 			isjumping = false;
@@ -439,6 +545,8 @@ void gCanvas::guiDraw() {
 		resumepanel.draw(rpx, rpy);
 
 		continuebutton.draw(leftbx, leftby);
+		musictickDraw();
+		fxtickDraw();
 	}
 	else if(gamestate == GAMESTATE_GAMEOVER) {
 		overpanel.draw(rpx, rpy);
@@ -455,7 +563,7 @@ void gCanvas::guiDraw() {
 	root->secondtextfont.drawText(
 		"BEST SCORE : " + gToStr(highscore),
 		rpx + 80,
-		rpy + 200
+		rpy + 150
 	);
 
 	mainmbutton.draw(rightbx, rightby);
@@ -476,6 +584,7 @@ void gCanvas::keyPressed(int key) {
 			jumprotation = 0.0f;
 			isgrounded = false;
 		} else if(secondjump) {
+			doublejump.play();
 			velocityy = 0.30f;
 			secondjump = false;
 		}
@@ -494,9 +603,11 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_D;
 		if(linestate == LINE_MID) {
 			linestate = LINE_RIGHT;
+			leftright.play();
 			linelocation = 3;
 		} else if (linestate == LINE_LEFT) {
 			linestate = LINE_MID;
+			leftright.play();
 			linelocation = 0;
 		}
 		break;
@@ -505,9 +616,11 @@ void gCanvas::keyPressed(int key) {
 		pressedkey = KEY_A;
 		if(linestate == LINE_MID) {
 			linestate = LINE_LEFT;
+			leftright.play();
 			linelocation = -3;
 		} else if (linestate == LINE_RIGHT) {
 			linestate = LINE_MID;
+			leftright.play();
 			linelocation = 0;
 		}
 		break;
@@ -576,11 +689,19 @@ void gCanvas::mouseDragged(int x, int y, int button) {
 
 void gCanvas::mousePressed(int x, int y, int button) {
 //	gLogi("gCanvas") << "mousePressed" << ", x:" << x << ", y:" << y << ", b:" << button;
+	if(musicbuttonhitbox.contains(x, y)) {
+		musictickstate = BUTTON_PRESSED;
+	}
+
+	if(fxbuttonhitbox.contains(x, y)) {
+		fxtickstate = BUTTON_PRESSED;
+	}
 }
 
 void gCanvas::mouseReleased(int x, int y, int button) {
 	if(gamestate == GAMESTATE_GAMEOVER) {
 		if(x >= leftbx && x < leftbx + leftbw && y >= leftby && y < leftby + leftbh) {
+			menubuttons.play();
 			gCanvas* cnv = new gCanvas(root);
 			root->setCurrentCanvas(cnv);
 			return;
@@ -589,6 +710,7 @@ void gCanvas::mouseReleased(int x, int y, int button) {
 
 	if(gamestate == GAMESTATE_PAUSE) {
 		if(x >= leftbx && x < leftbx + leftbw && y >= leftby && y < leftby + leftbh) {
+			menubuttons.play();
 			isresuming = true;
 			resumetimer = 3.0f;
 		}
@@ -596,10 +718,30 @@ void gCanvas::mouseReleased(int x, int y, int button) {
 
 	if(gamestate == GAMESTATE_GAMEOVER || gamestate == GAMESTATE_PAUSE) {
 		if(x >= rightbx && x < rightbx + rightbw && y >= rightby && y < rightby + rightbh) {
+			menubuttons.play();
 			MainMenuCanvas* cnv = new MainMenuCanvas(root);
 			root->setCurrentCanvas(cnv);
 			return;
 		}
+	}
+
+	if(musicbuttonhitbox.contains(x, y) && musictickstate == BUTTON_PRESSED) {
+	    musictickstate = BUTTON_PERFORMED;
+	    ismusicenabled = !ismusicenabled;
+	    optionsound.play();
+		applyAudioSettings();
+		musictickSetup();
+	}
+	else if(fxbuttonhitbox.contains(x, y) && fxtickstate == BUTTON_PRESSED) {
+	    fxtickstate = BUTTON_PERFORMED;
+	    isfxenabled = !isfxenabled;
+	    optionsound.play();
+	    applyAudioSettings();
+		fxtickSetup();
+	}
+	else {
+		musictickstate = BUTTON_CANCELED;
+		fxtickstate = BUTTON_CANCELED;
 	}
 
 	if(resumepanelshown) return;

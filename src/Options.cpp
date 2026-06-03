@@ -18,6 +18,9 @@ Options::~Options() {
 }
 
 void Options::setup() {
+	buttonsound.loadSound("effectsound/menubuttons.wav");
+	optionsound.loadSound("effectsound/optionbuttons.wav");
+
 	containerSetup();
 	tabSetup();
 	contactSetup();
@@ -28,6 +31,14 @@ void Options::setup() {
 }
 
 void Options::update() {
+	if(root->getSound() == 1) {
+		buttonsound.setVolume(0.5f);
+		optionsound.setVolume(0.5f);
+	}
+	if(root->getSound() == 0) {
+		buttonsound.setVolume(0.0f);
+		optionsound.setVolume(0.0f);
+	}
 }
 
 void Options::draw() {
@@ -257,17 +268,20 @@ void Options::tabButtonPressed(int x, int y) {
 void Options::tabButtonReleased(int x, int y) {
 	if(returnhitbox.contains(x, y) && returnbuttonstate == BUTTON_PRESSED) {
 		returnbuttonstate = BUTTON_PERFORMED;
+		buttonsound.play();
 		root->setCurrentCanvas(new MainMenuCanvas(root));
 		return;
 	}
 	if(contactbutton.contains(x, y) && contactbuttonstate == BUTTON_PRESSED) {
 		contactbuttonstate = BUTTON_PERFORMED;
+		buttonsound.play();
 		showcontactpanel = true;
 		showcreditspanel = false;
 		return;
 	}
 	if(creditsbutton.contains(x, y) && creditsbuttonstate == BUTTON_PRESSED) {
 		creditsbuttonstate = BUTTON_PERFORMED;
+		buttonsound.play();
 		showcreditspanel = true;
 		showcontactpanel = false;
 		return;
@@ -275,12 +289,14 @@ void Options::tabButtonReleased(int x, int y) {
 	if(showcreditspanel && crexitbutton.contains(x, y) && crexitbuttonstate == BUTTON_PRESSED) {
 		gLogi("Options") << "Credits Kapatildi";
 		crexitbuttonstate = BUTTON_PERFORMED;
+		buttonsound.play();
 		showcreditspanel = false;
 		return;
 	}
 	if(showcontactpanel && coexitbutton.contains(x, y) && coexitbuttonstate == BUTTON_PRESSED) {
 		gLogi("Options") << "Contact Kapatildi";
 		coexitbuttonstate = BUTTON_PERFORMED;
+		buttonsound.play();
 		showcontactpanel = false;
 		return;
 	}
@@ -379,6 +395,7 @@ void Options::audioSettingsReleased(int x, int y) {
 	if(musicbuttonhitbox.contains(x, y) && musictickstate == BUTTON_PRESSED) {
 	    musictickstate = BUTTON_PERFORMED;
 	    ismusicenabled = !ismusicenabled;
+	    optionsound.play();
 		applyAudioSettings();
 		containerSetup();
 		tabSetup();
@@ -386,7 +403,8 @@ void Options::audioSettingsReleased(int x, int y) {
 	else if(fxbuttonhitbox.contains(x, y) && fxtickstate == BUTTON_PRESSED) {
 	    fxtickstate = BUTTON_PERFORMED;
 	    isfxenabled = !isfxenabled;
-		applyAudioSettings();
+	    optionsound.play();
+	    applyAudioSettings();
 		containerSetup();
 		tabSetup();
 	}

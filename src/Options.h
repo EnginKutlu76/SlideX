@@ -11,6 +11,7 @@
 #include <gBaseCanvas.h>
 #include "gApp.h"
 #include "gImage.h"
+#include "gSound.h"
 
 class Options: public gBaseCanvas {
 public:
@@ -179,6 +180,8 @@ private:
 
 	std::string line1, line2, line3, line4, line5, line6, line7;
 	int centerx, starty, linegap;
+
+	gSound buttonsound, optionsound;
 };
 
 #endif /* SRC_OPTIONS_H_ */
