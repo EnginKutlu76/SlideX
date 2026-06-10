@@ -5,13 +5,13 @@
 *      Author: Noyan Culum
 */
 
-
 #include "gCanvas.h"
 #include "MainMenuCanvas.h"
 #include <ctime>
 #include <vector>
 #include <cstdlib>
 #include <cmath>
+
 gCanvas::gCanvas(gApp* root) : gBaseCanvas(root) {
 	this->root = root;
 }
@@ -529,7 +529,7 @@ void gCanvas::obstacleDraw() {
 				float worldX = (x - 1) * LANE_OFFSET;
 				float worldY = GROUND_Y + (y * GROUND_Y);
 
-				obstacle.setScale(1.5f, 1.0f, 1.0f);
+				obstacle.setScale(1.0f, 1.0f, 1.0f);
 				obstacle.setPosition(worldX, worldY, rows[i].z);
 				obstacle.draw();
 			}
