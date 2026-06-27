@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10.2)
 
 ########## PROJECT NAME ##########
-set(APP_NAME SlideX)
+set(APP_NAME GlistApp)
 
 
 ########## USED PLUGINS LIST ##########
@@ -107,21 +107,16 @@ set(GlistApp_SOURCES
 		${APP_DIR}/src/main.cpp
 		${APP_DIR}/src/gApp.cpp
 		${APP_DIR}/src/gCanvas.cpp
+		${APP_DIR}/src/MainMenuCanvas.cpp
 		${APP_DIR}/src/Options.cpp
 )
 
 set(GlistApp_HEADERS
 		${APP_DIR}/src/gApp.h
 		${APP_DIR}/src/gCanvas.h
+		${APP_DIR}/src/MainMenuCanvas.h
 		${APP_DIR}/src/Options.h
 )
-
-if(MSVC)
-    add_compile_options(/Zi)
-    add_link_options(/DEBUG)
-else()
-    add_compile_options(-g)
-endif()
 
 add_executable(${APP_NAME}
 		${GlistApp_SOURCES}

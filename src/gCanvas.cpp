@@ -30,7 +30,9 @@ void gCanvas::setup() {
 	sky.loadTextures(texturepaths);
 	sky.pan(PI / 3);
 
-	tex.loadTexture("ss.jpg");
+//	tex.loadTexture("ss.jpg");
+	tex.loadTexture("Panel/panel-000.png");
+
 	mat.setDiffuseMap(&tex);
 	player.setMaterial(&mat);
 	jumpsound.loadSound("effectsound/jumping.wav");
@@ -125,6 +127,23 @@ void gCanvas::update() {
 	    root->saveHighScore(highscore);
 	}
 	score = (int)scoreFloat;
+	int panelIndex = score / 200;
+
+	// En fazla 31 olsun (00-31)
+	if (panelIndex > 31)
+	    panelIndex = 31;
+
+	static int currentPanel = -1;
+
+	if (panelIndex != currentPanel)
+	{
+	    currentPanel = panelIndex;
+
+	    char filename[64];
+	    sprintf(filename, "Panel/panel-%03d.png", currentPanel);
+
+	    tex.loadTexture(filename);
+	}
 	lastplayerz = player.getPosZ();
 
 	controlUpdate();
@@ -132,7 +151,7 @@ void gCanvas::update() {
 	collision();
 	planeUpdate();
 	camUpdate();
-	colorphase += root->getAppManager()->getElapsedTime() * 0.05f;
+	colorphase += root->getAppManager()->getElapsedTime() * 0.005f;
 
 	targetColor = glm::vec3(
 	    127.5f + 127.5f * std::sin(colorphase),
@@ -441,7 +460,7 @@ void gCanvas::scoreSetup() {
 }
 
 void gCanvas::scoreDraw() {
-	root->secondtextfont.drawText(gToStr(score), scorex, scorey + 10);
+	root->secondtextfont.drawText(gToStr(score), scorex, scorey + 50);
 }
 
 void gCanvas::guiSetup() {
@@ -542,7 +561,7 @@ void gCanvas::obstacleDraw() {
 
 void gCanvas::fpsSetup() {
 	fpscounterx = scorex + 20.0f;
-	fpscountery = scorey + 30.0f;
+	fpscountery = scorey + 70.0f;
 }
 
 void gCanvas::fpsDraw() {
@@ -796,7 +815,7 @@ void gCanvas::windowResized(int w, int h) {
 	scorey = root->textfont.getStringHeight(gToStr(score));
 
 	fpscounterx = scorex + 20.0f;
-	fpscountery = scorey + 30.0f;
+	fpscountery = scorey + 70.0f;
 
 	hitbox.set(0, 0, w, h);
 }
