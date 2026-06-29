@@ -127,11 +127,8 @@ void gCanvas::update() {
 	    root->saveHighScore(highscore);
 	}
 	score = (int)scoreFloat;
-	int panelIndex = score / 200;
 
-	// En fazla 31 olsun (00-31)
-	if (panelIndex > 31)
-	    panelIndex = 31;
+	int panelIndex = (score / 100) % 32;
 
 	static int currentPanel = -1;
 
@@ -143,7 +140,9 @@ void gCanvas::update() {
 	    sprintf(filename, "Panel/panel-%03d.png", currentPanel);
 
 	    tex.loadTexture(filename);
+	    scoresound.play();
 	}
+
 	lastplayerz = player.getPosZ();
 
 	controlUpdate();
