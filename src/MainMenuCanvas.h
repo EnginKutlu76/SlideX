@@ -71,8 +71,8 @@ private:
 	gImage glistlogo;
 	int glistlogox, glistlogoy, glistlogow, glistlogoh;
 	int nitralogox, nitralogoy, nitralogow, nitralogoh;
-	int startx, starty, startw, starth;
 	int optionx, optiony, optionw, optionh;
+	int startx, starty, startw, starth;
 	int titlex, titley, titlew, titleh;
 	gRect starthitbox, optionhitbox;
 	int startstate, optionstate;

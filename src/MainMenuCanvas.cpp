@@ -118,32 +118,57 @@ void MainMenuCanvas::logoSetup() {
 }
 
 void MainMenuCanvas::startSetup() {
-	starttext = root->startkey;
-	startw = root->titlefont.getStringWidth(starttext);
-	starth = root->titlefont.getStringHeight(starttext);
-	startx = titlex + (titlew - startw) / 2;
-	starty = titley + startw;
-	startbuttonactive.loadImage("Interface/Button 1/Button Active.png");
-	startbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
-	startbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
-	buttonw = startbuttonactive.getWidth() * 1.30;
-	buttonh = startbuttonactive.getHeight() * 1.30;
-	startbuttonx = startx - (buttonw - startw) / 2;
-	startbuttony = starty - buttonh + (buttonh - starth) / 2;
-	starthitbox.set(startx, starty - starth, startx + startw, starty);
-	startstate = BUTTON_NONE;
+    starttext = root->startkey;
+
+    startbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+    startbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+    startbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+
+    buttonw = startbuttonactive.getWidth() * 1.30f;
+    buttonh = startbuttonactive.getHeight() * 1.30f;
+
+    startbuttonx = (getWidth() - buttonw) / 2;
+    startbuttony = titley + 80;
+
+    startw = root->thirdtextfont.getStringWidth(starttext);
+    starth = root->thirdtextfont.getStringHeight(starttext);
+
+    startx = startbuttonx + (buttonw - startw) / 2;
+    starty = startbuttony + (buttonh + starth) / 2;
+
+    starthitbox.set(
+        startbuttonx,
+        startbuttony,
+        startbuttonx + buttonw,
+        startbuttony + buttonh
+    );
+
+    startstate = BUTTON_NONE;
 }
 
 void MainMenuCanvas::optionSetup() {
 	optiontext = root->optionskey;
-	optionw = root->titlefont.getStringWidth(optiontext);
-	optionh = root->titlefont.getStringHeight(optiontext);
-	optionx = startx + (startw - optionw) / 2;
-	optiony = starty + (optionh + 60);
+
 	optionsbuttonactive.loadImage("Interface/Button 1/Button Active.png");
 	optionsbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
 	optionsbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
-	optionhitbox.set(optionx, optiony - optionh, optionx + optionw, optiony);
+
+	optionw = root->thirdtextfont.getStringWidth(optiontext);
+	optionh = root->thirdtextfont.getStringHeight(optiontext);
+
+	optionsbuttonx = startbuttonx;
+	optionsbuttony = startbuttony + buttonh + 20;
+
+	optionx = optionsbuttonx + (buttonw - optionw) / 2;
+	optiony = optionsbuttony + (buttonh + optionh) / 2;
+
+	optionhitbox.set(
+		optionsbuttonx,
+		optionsbuttony,
+		optionsbuttonx + buttonw,
+		optionsbuttony + buttonh
+	);
+
 	optionstate = BUTTON_NONE;
 }
 
@@ -169,14 +194,15 @@ void MainMenuCanvas::startDraw() {
 	if(startstate == BUTTON_FOCUS) startbuttonhover.draw(startbuttonx, startbuttony, buttonw, buttonh);
 	if(startstate == BUTTON_PRESSED) startbuttonactive.draw(startbuttonx, startbuttony, buttonw, buttonh);
 	else startbuttonnormal.draw(startbuttonx, startbuttony, buttonw, buttonh);
-	root->thirdtextfont.drawText(starttext, startx + 10, starty - 5);
+	root->thirdtextfont.drawText(starttext, startx, starty);
 	setColor(normalcolor);
 }
 
 void MainMenuCanvas::optionDraw() {
-	if(optionstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(optionstate == BUTTON_PRESSED) setColor(pressedcolor);
-	root->titlefont.drawText(optiontext, optionx, optiony);
+	if(optionstate == BUTTON_FOCUS) optionsbuttonhover.draw(optionsbuttonx, optionsbuttony, buttonw, buttonh);
+	if(optionstate == BUTTON_PRESSED) optionsbuttonactive.draw(optionsbuttonx, optionsbuttony, buttonw, buttonh);
+	else optionsbuttonnormal.draw(optionsbuttonx, optionsbuttony, buttonw, buttonh);
+	root->thirdtextfont.drawText(optiontext, optionx, optiony);
 	setColor(normalcolor);
 }
 
@@ -229,6 +255,6 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 
 	else {
 		startstate = BUTTON_CANCELED;
-		//optionstate = BUTTON_CANCELED;
+		optionstate = BUTTON_CANCELED;
 	}
 }
