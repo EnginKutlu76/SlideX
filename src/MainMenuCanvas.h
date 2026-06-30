@@ -80,6 +80,12 @@ private:
 	//gImage startlogo, optionslogo, contactlogo, creditslogo;
 	//std::unique_ptr<Fade> fadeeffect;
 	gSound buttonsound;
+
+	gImage startbuttonactive, startbuttonhover, startbuttonnormal;
+	gImage optionsbuttonactive, optionsbuttonhover, optionsbuttonnormal;
+	int startbuttonx, startbuttony;
+	int optionsbuttonx, optionsbuttony;
+	int buttonw, buttonh;
 };
 
 #endif /* SRC_MAINMENUCANVAS_H_ */

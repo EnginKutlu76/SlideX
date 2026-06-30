@@ -123,6 +123,13 @@ void MainMenuCanvas::startSetup() {
 	starth = root->titlefont.getStringHeight(starttext);
 	startx = titlex + (titlew - startw) / 2;
 	starty = titley + startw;
+	startbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	startbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	startbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+	buttonw = startbuttonactive.getWidth() * 1.30;
+	buttonh = startbuttonactive.getHeight() * 1.30;
+	startbuttonx = startx - (buttonw - startw) / 2;
+	startbuttony = starty - buttonh + (buttonh - starth) / 2;
 	starthitbox.set(startx, starty - starth, startx + startw, starty);
 	startstate = BUTTON_NONE;
 }
@@ -133,6 +140,9 @@ void MainMenuCanvas::optionSetup() {
 	optionh = root->titlefont.getStringHeight(optiontext);
 	optionx = startx + (startw - optionw) / 2;
 	optiony = starty + (optionh + 60);
+	optionsbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	optionsbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	optionsbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
 	optionhitbox.set(optionx, optiony - optionh, optionx + optionw, optiony);
 	optionstate = BUTTON_NONE;
 }
@@ -156,9 +166,10 @@ void MainMenuCanvas::logoDraw() {
 
 void MainMenuCanvas::startDraw() {
 	//if (gamestate != gApp::GAME_PAUSE) return;
-	if(startstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(startstate == BUTTON_PRESSED) setColor(pressedcolor);
-	root->titlefont.drawText(starttext, startx, starty);
+	if(startstate == BUTTON_FOCUS) startbuttonhover.draw(startbuttonx, startbuttony, buttonw, buttonh);
+	if(startstate == BUTTON_PRESSED) startbuttonactive.draw(startbuttonx, startbuttony, buttonw, buttonh);
+	else startbuttonnormal.draw(startbuttonx, startbuttony, buttonw, buttonh);
+	root->thirdtextfont.drawText(starttext, startx + 10, starty - 5);
 	setColor(normalcolor);
 }
 
@@ -195,19 +206,16 @@ void MainMenuCanvas::updateButtonState(int x, int y) {
 void MainMenuCanvas::checkButtonPressed(int x, int y, int button) {
 	if(starthitbox.contains(x, y)) {
 		startstate = BUTTON_PRESSED;
-		starty += 2;
 	}
 
 	if(optionhitbox.contains(x, y)) {
 		optionstate = BUTTON_PRESSED;
-		optiony += 2;
 	}
 }
 
 void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 	if(starthitbox.contains(x, y) && startstate == BUTTON_PRESSED) {
 		startstate = BUTTON_PERFORMED;
-		starty -= 2;
 		buttonsound.play();
 		//root->gamestate = root->GAME_LOAD;
 		root->setCurrentCanvas(new gCanvas(root));
@@ -215,7 +223,6 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 
 	else if(optionhitbox.contains(x, y) && optionstate == BUTTON_PRESSED) {
 		optionstate = BUTTON_PERFORMED;
-		optiony -= 2;
 		buttonsound.play();
 		root->setCurrentCanvas(new Options(root));
 	}
