@@ -21,13 +21,12 @@ void Options::setup() {
 	buttonsound.loadSound("effectsound/menubuttons.wav");
 	optionsound.loadSound("effectsound/optionbuttons.wav");
 
+	backgroundSetup();
 	containerSetup();
 	tabSetup();
 	contactSetup();
 	creditsSetup();
-	sectiontitle = "OPTIONS";
-	titlex = (containerw + gametabbuttonw) / 2;
-	titley = tabh;
+	titleSetup();
 }
 
 void Options::update() {
@@ -42,9 +41,12 @@ void Options::update() {
 }
 
 void Options::draw() {
-	root->drawMenuBackground(getWidth(), getHeight());
-	containerDraw();
+	backgroundDraw();
+	setColor(containercolor);
+	audioSettingsDraw();
+	setColor(255, 255, 255);
 	tabDraw();
+	titleDraw();
 	if(showcontactpanel) {
 		contactDraw();
 	}
@@ -57,9 +59,21 @@ void Options::draw() {
 	setColor(normalcolor);
 }
 
+void Options::backgroundSetup() {
+	background.loadImage("Interface/Card X1/Card X2.png");
+	bgw = background.getWidth();
+	bgh = background.getHeight() * 0.80;
+	bgx = (getWidth() - bgw) / 2;
+	bgy = (getHeight() - bgh) / 2;
+}
+
+void Options::backgroundDraw() {
+	background.draw(bgx, bgy, bgw, bgh);
+}
+
 void Options::creditsSetup() {
-	creditspanel.loadImage("UIasset/PNG/MainPanel03.png");
-	crexit.loadImage("button.png");
+	creditspanel.loadImage("Interface/Card X2/Card X3.png");
+	crexit.loadImage("Interface/Icons/03.png");
 	line1 = "Developed By";
 	line2 = "Engin Kutlu";
 	line3 = "Game Studio: Tengri Games";
@@ -113,8 +127,8 @@ void Options::creditsDraw() {
 
 void Options::contactSetup() {
 	contactlines.clear();
-	contactpanel.loadImage("UIasset/PNG/MainPanel03.png");
-	coexit.loadImage("button.png");
+	contactpanel.loadImage("Interface/Card X2/Card X3.png");
+	coexit.loadImage("Interface/Icons/03.png");
 	contactlines.push_back("E-Mail: contact@yourmail.com");
 	contactlines.push_back("X: x.com/youraccount");
 	contactlines.push_back("Instagram: instagram.com/youraccount");
@@ -207,13 +221,12 @@ void Options::mouseExited() {
 }
 
 void Options::windowResized(int w, int h) {
+	backgroundSetup();
 	containerSetup();
 	tabSetup();
 	contactSetup();
 	creditsSetup();
-	sectiontitle = "OPTIONS";
-	titlex = (containerw + gametabbuttonw) / 2;
-	titley = tabh;
+	titleSetup();
 }
 
 void Options::showNotify() {
@@ -328,13 +341,9 @@ void Options::tabButtonFocus(int x, int y) {
 }
 
 void Options::containerSetup() {
-	backgroundimg.loadImage("UIasset/PNG/SelectPanel01.png");
-	returnimg.loadImage("UIasset/PNG/button12.png");
-	applyimg.loadImage("UIasset/PNG/button14.png");
-	resetimg.loadImage("UIasset/PNG/button13.png");
-
-	contactimg.loadImage("UIasset/PNG/button14.png");
-	creditsimg.loadImage("UIasset/PNG/button13.png");
+	returnimg.loadImage("Interface/Button 1/Button Active.png");
+	applyimg.loadImage("Interface/Button 1/Button Active.png");
+	resetimg.loadImage("Interface/Button 1/Button Active.png");
 
 	int width = getWidth();
 	int height = getHeight();
@@ -353,9 +362,6 @@ void Options::containerSetup() {
 }
 
 void Options::containerDraw() {
-	setColor(containercolor);
-	backgroundimg.draw(containerx, containery, containerw, containerh);
-	audioSettingsDraw();
 	setColor(255, 255, 255);
 }
 
@@ -439,12 +445,23 @@ void Options::returnDraw() {
 }
 
 void Options::contactTabButtonSetup() {
+	contactbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	contactbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	contactbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+
+    buttonw = contactbuttonactive.getWidth() * 1.30f;
+    buttonh = contactbuttonactive.getHeight() * 1.30f;
+
+    contactbuttonx = containerx + (containerw * 0.20);
+    contactbuttony = containery + 250;
+
+
 	contacttext = "Contact";
 	contactbuttonstate = BUTTON_NONE;
 	contacttabbuttonh = tabh;
 	contacttabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	contacttabbuttonx = containerx + (containerw * 0.10);
-	contacttabbuttony = containery + 250;
+	contacttabbuttonx = contactbuttonx + (buttonw - contacttabbuttonw) / 2;
+	contacttabbuttony = contactbuttony + (buttonh + contacttabbuttonh) / 2;
 	contactbutton.set(contacttabbuttonx, contacttabbuttony, contacttabbuttonx + contacttabbuttonw, contacttabbuttony + contacttabbuttonh);
 }
 
@@ -453,15 +470,18 @@ void Options::creditsTabButtonSetup() {
 	creditsbuttonstate = BUTTON_NONE;
 	creditstabbuttonh = tabh;
 	creditstabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	creditstabbuttonx = containerx + (containerw * 0.10);
+	creditstabbuttonx = containerx + (containerw * 0.20);
 	creditstabbuttony = contacttabbuttony + 75;
 	creditsbutton.set(creditstabbuttonx, creditstabbuttony, creditstabbuttonx + creditstabbuttonw, creditstabbuttony + creditstabbuttonh);
 }
 
 void Options::contactTabButtonDraw() {
-	if(contactbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(contactbuttonstate == BUTTON_PRESSED || contactbuttonstate == BUTTON_PERFORMED || activetab == TAB_CONTACT) setColor(pressedcolor);
-	contactimg.draw(contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh);
+	setColor(255, 255, 255);
+	if(contactbuttonstate == BUTTON_FOCUS) contactbuttonhover.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
+	if(contactbuttonstate == BUTTON_PRESSED || contactbuttonstate == BUTTON_PERFORMED || activetab == TAB_CONTACT) contactbuttonactive.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
+	else contactbuttonnormal.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
+
+//	contactimg.draw(contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh);
 	tabfontw = root->secondtextfont.getStringWidth(contacttext);
 	tabfonth = root->secondtextfont.getStringHeight(contacttext);
 	tabfontx = contacttabbuttonx + (contacttabbuttonw - tabfontw) / 2;
@@ -486,11 +506,11 @@ void Options::creditsTabButtonDraw() {
 
 void Options::musictickSetup() {
 	musictext = "Music";
-	musicuncheck.loadImage("UIasset/PNG/button02.png");
-	musiccheck.loadImage("check-markred.png");
+	musicuncheck.loadImage("inactivecolor.png");
+	musiccheck.loadImage("Interface/Icons/30.png");
 	musictextw = root->secondtextfont.getStringWidth(musictext);
 	musictexth = root->secondtextfont.getStringHeight(musictext);
-	musictextx = containerx + (containerw * 0.10);
+	musictextx = containerx + (containerw * 0.20);
 	musictexty = containery + containerh * 0.25f;
 	musicuncheckw = musicuncheck.getWidth() * 0.5;
 	musicuncheckh = musicuncheck.getHeight() * 0.5;
@@ -504,11 +524,11 @@ void Options::musictickSetup() {
 
 void Options::fxtickSetup() {
 	fxtext = "FX Sound";
-	fxuncheck.loadImage("UIasset/PNG/button02.png");
-	fxcheck.loadImage("check-markred.png");
+	fxuncheck.loadImage("inactivecolor.png");
+	fxcheck.loadImage("Interface/Icons/30.png");
 	fxtextw = root->secondtextfont.getStringWidth(fxtext);
 	fxtexth = root->secondtextfont.getStringHeight(fxtext);
-	fxtextx = containerx + (containerw * 0.10);
+	fxtextx = containerx + (containerw * 0.20);
 	fxtexty = musictexty + (containerh / 10);
 	fxuncheckw = fxuncheck.getWidth() * 0.5;
 	fxuncheckh = fxuncheck.getHeight() * 0.5;
@@ -541,3 +561,21 @@ void Options::fxtickDraw() {
 void Options::applyAudioSettings() {
 	root->saveAudioSettings(isfxenabled, ismusicenabled);
 }
+
+void Options::titleSetup() {
+	titlew = root->gametitlefont.getStringWidth(root->optionskey);
+	titleh = root->gametitlefont.getStringHeight(root->optionskey);
+
+//	titlex = (getWidth() - titlew) / 2;
+//	titley = (getHeight() - titleh) / 5;
+
+	titlex = bgx + (bgw - titlew) / 2;
+	titley = tabh + titleh;
+
+}
+
+void Options::titleDraw() {
+	setColor(255, 255, 255);
+	root->gametitlefont.drawText(root->optionskey, titlex, titley);
+}
+

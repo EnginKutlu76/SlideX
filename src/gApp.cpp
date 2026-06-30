@@ -25,10 +25,6 @@ void gApp::setup() {
 	appmanager->setCurrentCanvas(cnv);
 }
 
-void gApp::drawMenuBackground(int w, int h) {
-	background->draw(0, 0, w, h);
-}
-
 int safeGetInt(std::string data) {
 	auto parts = gSplitString(data, "|");
 	if(parts.size() > 1) return gToInt(parts[1]);
@@ -41,8 +37,6 @@ void gApp::loadAssets() {
 	textfont.loadFont("neon_zone/Neon Zone.ttf", 18);
 	secondtextfont.loadFont("StrongStitch-Regular.otf", 20);
 	thirdtextfont.loadFont("neon_zone/Neon Zone.ttf", 25);
-	background = new gImage();
-	background->loadImage("UIasset/PNG/MainPanel01.png");
 
 	// OPTIONS DB
 	optionsdb.loadDatabase("options.db");

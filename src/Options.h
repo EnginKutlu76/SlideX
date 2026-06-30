@@ -94,6 +94,12 @@ private:
 	void creditsSetup();
 	void creditsDraw();
 
+	void backgroundSetup();
+	void backgroundDraw();
+
+	void titleSetup();
+	void titleDraw();
+
 	//tabs
 	gRect gametabbutton, graphicstabbutton, audiotabbutton, contactbutton, creditsbutton;
 	std::string gametabtext, graphicstabtext, audiotabtext, contacttext, creditstext;
@@ -144,7 +150,7 @@ private:
 	std::string tabtitle;
 	int tabtextx, tabtexty, tabtextw, tabtexth;
 	std::string sectiontitle;
-	int titlex, titley;
+	int titlex, titley, titlew, titleh;
 
 	int settingstartx, settingstarty;
 	int settingrowh;
@@ -182,6 +188,16 @@ private:
 	int centerx, starty, linegap;
 
 	gSound buttonsound, optionsound;
+
+	//bg
+	gImage background;
+	int bgx, bgy, bgw, bgh;
+
+	gImage contactbuttonactive, contactbuttonhover, contactbuttonnormal;
+	gImage creditsbuttonactive, creditsbuttonhover, creditsbuttonnormal;
+	int contactbuttonx, contactbuttony;
+	int creditsbuttonx, creditsbuttony;
+	int buttonw, buttonh;
 };
 
 #endif /* SRC_OPTIONS_H_ */

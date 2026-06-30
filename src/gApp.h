@@ -31,7 +31,6 @@ public:
 	startkey = "start", optionskey = "options", creditskey = "credits", returnkey = "return",
 	generalkey = "general", videokey = "video", audiokey = "audio", controlskey = "controls", applykey = "apply", resetkey = "reset", contactkey = "contact",
 	generallabelkey = ".";
-	void drawMenuBackground(int w, int h);
 
 	void saveAudioSettings(int sound, int music);
 	void saveHighScore(int highscore);
@@ -55,7 +54,6 @@ public:
 private:
 	bool musicenabled = true;
 	void loadAssets();
-	gImage* background;
 	gDatabase optionsdb;
 	int sound, music, highscore;
 };
