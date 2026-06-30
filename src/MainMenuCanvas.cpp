@@ -78,9 +78,10 @@ void MainMenuCanvas::mouseExited() {
 }
 
 void MainMenuCanvas::windowResized(int w, int h) {
-    logoSetup();
-    startSetup();
-    optionSetup();
+	logoSetup();
+	startSetup();
+	optionSetup();
+	colorSetup();
 }
 
 void MainMenuCanvas::showNotify() {
@@ -111,8 +112,8 @@ void MainMenuCanvas::logoSetup() {
 
 	glistlogow = glistlogo.getWidth() / glistlogosizer;
 	glistlogoh = glistlogo.getHeight() / glistlogosizer;
-	glistlogox = 1300;
-	glistlogoy = 840;
+	glistlogox = getWidth() - (glistlogow * 1.25);
+	glistlogoy = getHeight() - (glistlogoh * 2);
 
 }
 
@@ -214,7 +215,7 @@ void MainMenuCanvas::checkButtonReleased(int x, int y, int button) {
 
 	else if(optionhitbox.contains(x, y) && optionstate == BUTTON_PRESSED) {
 		optionstate = BUTTON_PERFORMED;
-		optiony -=2;
+		optiony -= 2;
 		buttonsound.play();
 		root->setCurrentCanvas(new Options(root));
 	}
