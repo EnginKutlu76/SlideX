@@ -145,6 +145,13 @@ void Options::contactSetup() {
 	coexith = coexit.getHeight() * 0.10;
 	coexitx = (copanelx + copanelw) - coexitw;
 	coexity = copanely;
+
+	contactw = root->secondtextfont.getStringWidth(contacttext);
+	contacth = root->secondtextfont.getStringHeight(contacttext);
+
+	contactx = contactbuttonx + (buttonw - contactw) / 2;
+	contacty = contactbuttony + (buttonh + contacth) / 2;
+
 	contactx = containerx + containerw * 0.01f;
 	contacty = containery + containerh * 0.18f;
 
@@ -455,17 +462,23 @@ void Options::contactTabButtonSetup() {
     contactbuttonx = containerx + (containerw * 0.20);
     contactbuttony = containery + 250;
 
-
 	contacttext = "Contact";
 	contactbuttonstate = BUTTON_NONE;
 	contacttabbuttonh = tabh;
 	contacttabbuttonw = (tabw - (tabw * 0.08)) / 2;
 	contacttabbuttonx = contactbuttonx + (buttonw - contacttabbuttonw) / 2;
 	contacttabbuttony = contactbuttony + (buttonh + contacttabbuttonh) / 2;
-	contactbutton.set(contacttabbuttonx, contacttabbuttony, contacttabbuttonx + contacttabbuttonw, contacttabbuttony + contacttabbuttonh);
+	contactbutton.set(contactbuttonx, contactbuttony, contactbuttonx + buttonw, contactbuttony + buttonh);
 }
 
 void Options::creditsTabButtonSetup() {
+	creditsbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	creditsbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	creditsbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+
+	creditsbuttonx = containerx + (containerw * 0.20);
+    creditsbuttony = containery + 250;
+
 	creditstext = "Credits";
 	creditsbuttonstate = BUTTON_NONE;
 	creditstabbuttonh = tabh;
@@ -481,19 +494,22 @@ void Options::contactTabButtonDraw() {
 	if(contactbuttonstate == BUTTON_PRESSED || contactbuttonstate == BUTTON_PERFORMED || activetab == TAB_CONTACT) contactbuttonactive.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
 	else contactbuttonnormal.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
 
-//	contactimg.draw(contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh);
-	tabfontw = root->secondtextfont.getStringWidth(contacttext);
-	tabfonth = root->secondtextfont.getStringHeight(contacttext);
+	tabfontw = root->thirdtextfont.getStringWidth(contacttext);
+	tabfonth = root->thirdtextfont.getStringHeight(contacttext);
+
 	tabfontx = contacttabbuttonx + (contacttabbuttonw - tabfontw) / 2;
 	tabfonty = contacttabbuttony + (contacttabbuttonh + tabfonth) / 2;
+
 	setColor(255, 255, 255);
-	root->thirdtextfont.drawText(contacttext, tabfontx, tabfonty);
+	root->thirdtextfont.drawText(contacttext, tabfontx, tabfonty - 100);
+	//root->thirdtextfont.drawText(contacttext, contactbuttonx, contactbuttony);
 	setColor(normalcolor);
 }
 
 void Options::creditsTabButtonDraw() {
-	if(creditsbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(creditsbuttonstate == BUTTON_PRESSED || creditsbuttonstate == BUTTON_PERFORMED || activetab == TAB_CREDITS) setColor(pressedcolor);
+	if(creditsbuttonstate == BUTTON_FOCUS) creditsbuttonhover.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
+	if(creditsbuttonstate == BUTTON_PRESSED || creditsbuttonstate == BUTTON_PERFORMED || activetab == TAB_CREDITS) creditsbuttonactive.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
+	else creditsbuttonnormal.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
 	creditsimg.draw(creditstabbuttonx, creditstabbuttony, creditstabbuttonw, creditstabbuttonh);
 	tabfontw = root->secondtextfont.getStringWidth(creditstext);
 	tabfonth = root->secondtextfont.getStringHeight(creditstext);
@@ -566,12 +582,8 @@ void Options::titleSetup() {
 	titlew = root->gametitlefont.getStringWidth(root->optionskey);
 	titleh = root->gametitlefont.getStringHeight(root->optionskey);
 
-//	titlex = (getWidth() - titlew) / 2;
-//	titley = (getHeight() - titleh) / 5;
-
 	titlex = bgx + (bgw - titlew) / 2;
 	titley = tabh + titleh;
-
 }
 
 void Options::titleDraw() {

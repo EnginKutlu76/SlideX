@@ -172,7 +172,7 @@ private:
 	int coexitx, coexity, coexitw, coexith;
 	std::vector<std::string> contactlines;
 	float contactlineh;
-	float contactx, contacty;
+	float contactx, contacty, contactw, contacth;
 	bool showcontactpanel = false;
 
 	gImage creditsimg;
