@@ -20,9 +20,11 @@ MainMenuCanvas::~MainMenuCanvas() {
 void MainMenuCanvas::setup() {
 	//background.loadImage("black.png");
 	buttonsound.loadSound("effectsound/menubuttons.wav");
-	logoSetup();
+	backgroundSetup();
+	titleSetup();
 	startSetup();
 	optionSetup();
+	logoSetup();
 	colorSetup();
 }
 
@@ -33,9 +35,10 @@ void MainMenuCanvas::update() {
 
 void MainMenuCanvas::draw() {
 	backgroundDraw();
-	logoDraw();
+	titleDraw();
 	startDraw();
 	optionDraw();
+	logoDraw();
 	//fadeEffectDraw();
 }
 
@@ -78,9 +81,11 @@ void MainMenuCanvas::mouseExited() {
 }
 
 void MainMenuCanvas::windowResized(int w, int h) {
-	logoSetup();
+	backgroundSetup();
+	titleSetup();
 	startSetup();
 	optionSetup();
+	logoSetup();
 	colorSetup();
 }
 
@@ -90,31 +95,24 @@ void MainMenuCanvas::showNotify() {
 void MainMenuCanvas::hideNotify() {
 }
 
-void MainMenuCanvas::backgroundDraw() {
-	root->drawMenuBackground(getWidth(), getHeight());
-	setColor(165, 55, 55);
-	root->gametitlefont.drawText(root->titlekey, titlex, titley);
-	setColor(255, 255, 255);
+void MainMenuCanvas::backgroundSetup() {
+	background.loadImage("Interface/Card X1/Card X2.png");
+	bgw = background.getWidth();
+	bgh = background.getHeight() * 0.80;
+	bgx = (getWidth() - bgw) / 2;
+	bgy = (getHeight() - bgh) / 2;
 }
 
-void MainMenuCanvas::logoSetup() {
-	glistlogo.loadImage("glistengine_logo.png");
+void MainMenuCanvas::backgroundDraw() {
+	background.draw(bgx, bgy, bgw, bgh);
+}
 
-	int titlesizer = 10;
-	int nitralogosizer = 8;
-	int glistlogosizer = 3;
-	int padding = 25;
-
+void MainMenuCanvas::titleSetup() {
 	titlew = root->gametitlefont.getStringWidth(root->titlekey);
 	titleh = root->gametitlefont.getStringHeight(root->titlekey);
+
 	titlex = (getWidth() - titlew) / 2;
 	titley = (getHeight() - titleh) / 5;
-
-	glistlogow = glistlogo.getWidth() / glistlogosizer;
-	glistlogoh = glistlogo.getHeight() / glistlogosizer;
-	glistlogox = getWidth() - (glistlogow * 1.25);
-	glistlogoy = getHeight() - (glistlogoh * 2);
-
 }
 
 void MainMenuCanvas::startSetup() {
@@ -128,7 +126,7 @@ void MainMenuCanvas::startSetup() {
     buttonh = startbuttonactive.getHeight() * 1.30f;
 
     startbuttonx = (getWidth() - buttonw) / 2;
-    startbuttony = titley + 80;
+    startbuttony = titley + buttonh + 80;
 
     startw = root->thirdtextfont.getStringWidth(starttext);
     starth = root->thirdtextfont.getStringHeight(starttext);
@@ -157,7 +155,7 @@ void MainMenuCanvas::optionSetup() {
 	optionh = root->thirdtextfont.getStringHeight(optiontext);
 
 	optionsbuttonx = startbuttonx;
-	optionsbuttony = startbuttony + buttonh + 20;
+	optionsbuttony = startbuttony + (buttonh * 2) + 20;
 
 	optionx = optionsbuttonx + (buttonw - optionw) / 2;
 	optiony = optionsbuttony + (buttonh + optionh) / 2;
@@ -172,6 +170,17 @@ void MainMenuCanvas::optionSetup() {
 	optionstate = BUTTON_NONE;
 }
 
+void MainMenuCanvas::logoSetup() {
+	glistlogo.loadImage("glistengine_logo.png");
+
+	int glistlogosizer = 3;
+	glistlogow = glistlogo.getWidth() / glistlogosizer;
+	glistlogoh = glistlogo.getHeight() / glistlogosizer;
+	glistlogox = startx + (startw - glistlogow) / 2;
+	glistlogoy = getHeight() - (glistlogoh * 2.35);
+
+}
+
 void MainMenuCanvas::colorSetup() {
 	pressedcolor.set(190, 190, 190);
 	normalcolor.set(255, 255, 255);
@@ -184,6 +193,12 @@ void MainMenuCanvas::colorSetup() {
 	menutitlefont.drawText("TANKS", titlex, titley);
 	setColor(255, 255, 255);
 }*/
+
+void MainMenuCanvas::titleDraw() {
+	setColor(165, 55, 55);
+	root->gametitlefont.drawText(root->titlekey, titlex, titley);
+	setColor(255, 255, 255);
+}
 
 void MainMenuCanvas::logoDraw() {
 	glistlogo.draw(glistlogox, glistlogoy, glistlogow, glistlogoh);

@@ -51,9 +51,11 @@ private:
 
 	gApp* root;
 
-	void logoSetup();
+	void backgroundSetup();
+	void titleSetup();
 	void startSetup();
 	void optionSetup();
+	void logoSetup();
 	void colorSetup();
 
 	void updateButtonState(int x, int y);
@@ -61,12 +63,14 @@ private:
 	void checkButtonReleased(int x, int y, int button);
 
 	void backgroundDraw();
-	void logoDraw();
+	void titleDraw();
 	void startDraw();
 	void optionDraw();
+	void logoDraw();
 	void fadeEffectDraw();
 
 	gImage background;
+	int bgx, bgy, bgw, bgh;
 	std::string starttext, optiontext;
 	gImage glistlogo;
 	int glistlogox, glistlogoy, glistlogow, glistlogoh;
