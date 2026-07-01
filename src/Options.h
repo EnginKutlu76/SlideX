@@ -141,6 +141,9 @@ private:
 	std::string returntext;
 	gRect returnhitbox;
 	int returnbuttonstate;
+	gImage returnactive;
+	gImage returnhover;
+	gImage returnnormal;
 
 	//titles
 	std::string tabtitle;

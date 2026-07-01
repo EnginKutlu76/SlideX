@@ -268,7 +268,6 @@ void Options::tabDraw() {
 void Options::tabButtonPressed(int x, int y) {
 	if(returnhitbox.contains(x, y)) {
 		returnbuttonstate = BUTTON_PRESSED;
-		returny += 2;
 	}
 	if(contactbutton.contains(x, y)) {
 		contactbuttonstate = BUTTON_PRESSED;
@@ -432,23 +431,46 @@ void Options::audioSettingsFocus(int x, int y) {
 }
 
 void Options::returnSetup() {
-	returntext = root->returnkey;
-	returnh = root->titlefont.getStringHeight(returntext);
-	returnw = root->titlefont.getStringWidth(returntext);
-	returnx = getWidth() * 5/100;
-	returny = getHeight() * 95/100;
+	returnactive.loadImage("Interface/Button 1/Button Active.png");
+	returnhover.loadImage("Interface/Button 1/Button Hover.png");
+	returnnormal.loadImage("Interface/Button 1/Button Normal.png");
 
-	returnhitbox.set(returnx, returny - returnh, returnx + returnw, returny);
+	buttonw = returnactive.getWidth() * 1.30f;
+	buttonh = returnactive.getHeight() * 1.30f;
+
+	returntext = root->returnkey;
+
+	returnx = contactbuttonx;
+	returny = creditsbuttony + buttonh + buttonspacing;
+
+	returnhitbox.set(
+	    returnx,
+	    returny,
+	    returnx + buttonw,
+	    returny + buttonh
+	);
+
 	returnbuttonstate = BUTTON_NONE;
 }
 
 void Options::returnDraw() {
-	setColor(255, 255, 255);
-	if(returnbuttonstate == BUTTON_FOCUS) setColor(focuscolor);
-	if(returnbuttonstate == BUTTON_PRESSED) setColor(pressedcolor);
-	returnimg.draw(returnx, returny - 40, 200, 50);
-	root->titlefont.drawText(returntext, returnx, returny);
-	setColor(255, 255, 255);
+    setColor(255, 255, 255);
+
+    if(returnbuttonstate == BUTTON_FOCUS)
+        returnhover.draw(returnx, returny, buttonw, buttonh);
+    else if(returnbuttonstate == BUTTON_PRESSED ||
+            returnbuttonstate == BUTTON_PERFORMED)
+        returnactive.draw(returnx, returny, buttonw, buttonh);
+    else
+        returnnormal.draw(returnx, returny, buttonw, buttonh);
+
+    int textW = root->thirdtextfont.getStringWidth(returntext);
+    int textH = root->thirdtextfont.getStringHeight(returntext);
+
+    int textX = returnx + (buttonw - textW) / 2;
+    int textY = returny + (buttonh + textH) / 2;
+
+    root->thirdtextfont.drawText(returntext, textX, textY);
 }
 
 void Options::contactTabButtonSetup() {
@@ -501,6 +523,7 @@ void Options::creditsTabButtonSetup() {
 }
 
 void Options::contactTabButtonDraw() {
+	setColor(255, 255, 255);
     if(contactbuttonstate == BUTTON_FOCUS)
         contactbuttonhover.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
     else if(contactbuttonstate == BUTTON_PRESSED ||
@@ -515,7 +538,6 @@ void Options::contactTabButtonDraw() {
     int textX = contactbuttonx + (buttonw - textW) / 2;
     int textY = contactbuttony + (buttonh + textH) / 2;
 
-	setColor(255, 255, 255);
     root->thirdtextfont.drawText(contacttext, textX, textY);
 }
 
