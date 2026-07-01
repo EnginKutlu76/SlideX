@@ -35,8 +35,9 @@ void gApp::loadAssets() {
 	titlefont.loadFont("neon_zone/Neon Zone.ttf", 30);
 	gametitlefont.loadFont("neon_zone/Neon Zone.ttf", 50);
 	textfont.loadFont("StrongStitch-Regular.otf", 6);
-	secondtextfont.loadFont("StrongStitch-Regular.otf", 20);
+	secondtextfont.loadFont("StrongStitch-Regular.otf", 15);
 	thirdtextfont.loadFont("neon_zone/Neon Zone.ttf", 19);
+	fourthtextfont.loadFont("neon_zone/Neon Zone.ttf", 12);
 
 	// OPTIONS DB
 	optionsdb.loadDatabase("options.db");

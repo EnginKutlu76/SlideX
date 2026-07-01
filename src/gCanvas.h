@@ -172,7 +172,7 @@ private:
 	int scorepanelx, scorepanely;
 	int leftbx, leftby, leftbw, leftbh;
 	int rightbx, rightby, rightbw, rightbh;
-	gRect hitbox;
+	gRect lefthitbox, righthitbox;
 
 	//timing
 	float resumetimer;
@@ -216,6 +216,11 @@ private:
 
 	gSkybox sky;
 
+	std::string restarttext;
+	std::string mainmenutext;
+	std::string continuetext;
+	std::string pausetext;
+	std::string gameovertext;
 	gImage restartbuttonactive, restartbuttonhover, restartbuttonnormal;
 	gImage mainmenubuttonactive, mainmenubuttonhover, mainmenubuttonnormal;
 	gImage continuebuttonactive, continuebuttonhover, continuebuttonnormal;
@@ -223,6 +228,8 @@ private:
 	int mainmenubuttonx, mainmenubuttony;
 	int continuebuttonx, continuebuttony;
 	int buttonw, buttonh;
+
+	int continuestate, restartstate, mainmenustate;
 };
 
 #endif /* GCANVAS_H_ */

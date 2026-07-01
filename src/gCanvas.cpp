@@ -30,6 +30,7 @@ void gCanvas::setup() {
 	sky.loadTextures(texturepaths);
 	sky.pan(PI / 3);
 
+
 //	tex.loadTexture("ss.jpg");
 	tex.loadTexture("Panel/panel-000.png");
 
@@ -219,7 +220,7 @@ void gCanvas::fxtickSetup() {
 	fxtextw = root->secondtextfont.getStringWidth(fxtext);
 	fxtexth = root->secondtextfont.getStringHeight(fxtext);
 	fxtextx = rpx + (resumepanel.getWidth() * 0.10);
-	fxtexty = musictexty + (resumepanel.getHeight() / 8);
+	fxtexty = musictexty + (resumepanel.getHeight() / 10);
 	fxuncheckw = fxuncheck.getWidth() * 0.08;
 	fxuncheckh = fxuncheck.getHeight() * 0.08;
 	fxuncheckx = rpx + (fxtextw * 1.5);
@@ -463,27 +464,63 @@ void gCanvas::scoreDraw() {
 }
 
 void gCanvas::guiSetup() {
+	float guiScale = 0.8f;
+
+	pausetext = "PAUSE";
+	gameovertext = "GAME OVER";
+	restarttext = "Restart";
+	mainmenutext = "Main Menu";
+	continuetext = "Continue";
+	int restartTextWidth = root->secondtextfont.getStringWidth(restarttext);
+	int continueTextWidth = root->secondtextfont.getStringWidth(continuetext);
+	int mainMenuTextWidth = root->secondtextfont.getStringWidth(mainmenutext);
 	resumepanel.loadImage("Interface/Card X2/Card X3.png");
 	overpanel.loadImage("Interface/Card X2/Card X3.png");
 	mainmbutton.loadImage("Interface/Button 1/Button Normal.png");
 	continuebutton.loadImage("Interface/Button 1/Button Normal.png");
 	restartbutton.loadImage("Interface/Button 1/Button Normal.png");
 
-	rpw = resumepanel.getWidth();
-	rph = resumepanel.getHeight();
+	restartbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	restartbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	restartbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+
+	mainmenubuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	mainmenubuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	mainmenubuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+
+	continuebuttonactive.loadImage("Interface/Button 1/Button Active.png");
+	continuebuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+	continuebuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+
+	buttonw = restartbuttonactive.getWidth() * 1.25 * guiScale;
+	buttonh = restartbuttonactive.getHeight() * 1.25 * guiScale;
+
+	rpw = resumepanel.getWidth() * guiScale;
+	rph = resumepanel.getHeight() * guiScale;
 	rpx = (getWidth() - rpw) / 2.0f;
 	rpy = (getHeight() - rph) / 2.0f;
 
-	leftbw = continuebutton.getWidth();
-	leftbh = continuebutton.getHeight();
-	leftbx = rpx + 100;
-	leftby = rpy + 300;
+	leftbw = continuebutton.getWidth() * guiScale;
+	leftbh = continuebutton.getHeight() * guiScale;
+	leftbx = rpx + 20 * guiScale;
+	leftby = rpy + 300 * guiScale;
 
-	rightbw = mainmbutton.getWidth();
-	rightbh = mainmbutton.getHeight();
-	rightbx = rpx + 300;
-	rightby = rpy + 300;
+	rightbw = mainmbutton.getWidth() * guiScale;
+	rightbh = mainmbutton.getHeight() * guiScale;
+	rightbx = rpx + 220 * guiScale;
+	rightby = rpy + 300 * guiScale;
 
+	continuestate = BUTTON_NONE;
+	restartstate = BUTTON_NONE;
+	mainmenustate = BUTTON_NONE;
+
+	lefthitbox.set(leftbx, leftby,
+	               leftbx + leftbw,
+	               leftby + leftbh);
+
+	righthitbox.set(rightbx, rightby,
+	                rightbx + rightbw,
+	                rightby + rightbh);
 }
 
 void gCanvas::obstacleSetup() {
@@ -572,26 +609,61 @@ void gCanvas::fpsDraw() {
 }
 
 void gCanvas::guiDraw() {
-	if(gamestate != GAMESTATE_PAUSE && gamestate != GAMESTATE_GAMEOVER) return;
-	if(isresuming) return;
+	if(isresuming)
+	    return;
 
-	setColor(0, 0, 0, 180);
-	hitbox.set(0, 0, getWidth(), getHeight());
-
-	setColor(255, 255, 255);
+	int x1 = leftbx + (buttonw - root->fourthtextfont.getStringWidth(continuetext)) / 2;
+	int y1 = leftby + buttonh / 2 + root->fourthtextfont.getStringHeight(continuetext) / 3;
 
 	if(gamestate == GAMESTATE_PAUSE) {
-		resumepanel.draw(rpx, rpy);
+		resumepanel.draw(rpx, rpy , rpw, rph);
 
-		continuebutton.draw(leftbx, leftby);
+		int titleX = rpx + (rpw - root->thirdtextfont.getStringWidth(pausetext)) / 2;
+		int titleY = rpy + 60;
+
+		if(continuestate == BUTTON_FOCUS) continuebuttonhover.draw(leftbx, leftby, buttonw, buttonh);
+		else if(continuestate == BUTTON_PRESSED) continuebuttonactive.draw(leftbx, leftby, buttonw, buttonh);
+		else continuebuttonnormal.draw(leftbx, leftby, buttonw, buttonh);
+
+		root->thirdtextfont.drawText(
+		    pausetext,
+		    titleX,
+		    titleY
+		);
+
+		//continuebutton.draw(leftbx, leftby);
+		root->fourthtextfont.drawText(continuetext, x1, y1);
 		musictickDraw();
 		fxtickDraw();
 	}
 	else if(gamestate == GAMESTATE_GAMEOVER) {
-		overpanel.draw(rpx, rpy);
+		overpanel.draw(rpx, rpy, rpw, rph);
 
-		restartbutton.draw(leftbx, leftby);
+		int titleX = rpx + (rpw - root->thirdtextfont.getStringWidth(gameovertext)) / 2;
+		int titleY = rpy + 60;
+
+		if(restartstate == BUTTON_FOCUS) restartbuttonhover.draw(leftbx, leftby, buttonw, buttonh);
+		else if(restartstate == BUTTON_PRESSED) restartbuttonactive.draw(leftbx, leftby, buttonw, buttonh);
+		else restartbuttonnormal.draw(leftbx, leftby, buttonw, buttonh);
+
+		root->thirdtextfont.drawText(
+		    gameovertext,
+		    titleX,
+		    titleY
+		);
+
+		int x2 = leftbx + (buttonw - root->fourthtextfont.getStringWidth(restarttext)) / 2;
+		int y2 = leftby + buttonh / 2 + root->fourthtextfont.getStringHeight(restarttext) / 3;
+		//restartbutton.draw(leftbx, leftby);
+		root->fourthtextfont.drawText(restarttext, x2, y2);
 	}
+
+	if(gamestate != GAMESTATE_PAUSE && gamestate != GAMESTATE_GAMEOVER) return;
+	if(isresuming) return;
+
+	if(mainmenustate == BUTTON_FOCUS) mainmenubuttonhover.draw(rightbx, rightby, buttonw, buttonh);
+	else if(mainmenustate == BUTTON_PRESSED) mainmenubuttonactive.draw(rightbx, rightby, buttonw, buttonh);
+	else mainmenubuttonnormal.draw(rightbx, rightby, buttonw, buttonh);
 
 	root->secondtextfont.drawText(
 		"SCORE : " + gToStr(score),
@@ -605,8 +677,10 @@ void gCanvas::guiDraw() {
 		rpy + 150
 	);
 
-	mainmbutton.draw(rightbx, rightby);
-
+	//mainmbutton.draw(rightbx, rightby);
+	int x3 = rightbx + (buttonw - root->fourthtextfont.getStringWidth(mainmenutext)) / 2;
+	int y3 = rightby + buttonh / 2 + root->fourthtextfont.getStringHeight(mainmenutext) / 3;
+	root->fourthtextfont.drawText(mainmenutext, x3, y3);
 	setColor(255, 255, 255);
 }
 
@@ -719,7 +793,35 @@ void gCanvas::charPressed(unsigned int codepoint) {
 }
 
 void gCanvas::mouseMoved(int x, int y) {
-//	gLogi("gCanvas") << "mouseMoved" << ", x:" << x << ", y:" << y;
+	if(gamestate == GAMESTATE_PAUSE) {
+		if(continuestate != BUTTON_PRESSED) {
+			if(lefthitbox.contains(x, y)) {
+				continuestate = BUTTON_FOCUS;
+			}
+			else {
+				continuestate = BUTTON_NONE;
+			}
+		}
+	}
+	if(gamestate == GAMESTATE_GAMEOVER) {
+		if(restartstate != BUTTON_PRESSED) {
+			if(lefthitbox.contains(x, y)) {
+				restartstate = BUTTON_FOCUS;
+			}
+			else {
+				restartstate = BUTTON_NONE;
+			}
+		}
+	}
+
+	if(mainmenustate != BUTTON_PRESSED) {
+		if(righthitbox.contains(x, y)) {
+			mainmenustate = BUTTON_FOCUS;
+		}
+		else {
+			mainmenustate = BUTTON_NONE;
+		}
+	}
 }
 
 void gCanvas::mouseDragged(int x, int y, int button) {
@@ -735,11 +837,27 @@ void gCanvas::mousePressed(int x, int y, int button) {
 	if(fxbuttonhitbox.contains(x, y)) {
 		fxtickstate = BUTTON_PRESSED;
 	}
+	if(righthitbox.contains(x, y)) {
+		mainmenustate = BUTTON_PRESSED;
+	}
+
+	if(gamestate == GAMESTATE_PAUSE) {
+		if(lefthitbox.contains(x, y)) {
+			continuestate = BUTTON_PRESSED;
+		}
+	}
+
+	if(gamestate == GAMESTATE_GAMEOVER) {
+		if(lefthitbox.contains(x, y)) {
+			restartstate = BUTTON_PRESSED;
+		}
+	}
 }
 
 void gCanvas::mouseReleased(int x, int y, int button) {
 	if(gamestate == GAMESTATE_GAMEOVER) {
-		if(x >= leftbx && x < leftbx + leftbw && y >= leftby && y < leftby + leftbh) {
+		if(lefthitbox.contains(x, y)) {
+			restartstate = BUTTON_PERFORMED;
 			menubuttons.play();
 			gCanvas* cnv = new gCanvas(root);
 			root->setCurrentCanvas(cnv);
@@ -748,7 +866,8 @@ void gCanvas::mouseReleased(int x, int y, int button) {
 	}
 
 	if(gamestate == GAMESTATE_PAUSE) {
-		if(x >= leftbx && x < leftbx + leftbw && y >= leftby && y < leftby + leftbh) {
+		if(lefthitbox.contains(x, y)) {
+			continuestate = BUTTON_PERFORMED;
 			menubuttons.play();
 			isresuming = true;
 			resumetimer = 3.0f;
@@ -756,7 +875,8 @@ void gCanvas::mouseReleased(int x, int y, int button) {
 	}
 
 	if(gamestate == GAMESTATE_GAMEOVER || gamestate == GAMESTATE_PAUSE) {
-		if(x >= rightbx && x < rightbx + rightbw && y >= rightby && y < rightby + rightbh) {
+		if(righthitbox.contains(x, y)) {
+			mainmenustate = BUTTON_PERFORMED;
 			menubuttons.play();
 			MainMenuCanvas* cnv = new MainMenuCanvas(root);
 			root->setCurrentCanvas(cnv);
@@ -799,16 +919,18 @@ void gCanvas::mouseExited() {
 }
 
 void gCanvas::windowResized(int w, int h) {
-	rpw = resumepanel.getWidth();
-	rph = resumepanel.getHeight();
-	rpx = (w - rpw) / 2.0f;
-	rpy = (h - rph) / 2.0f;
+	float guiScale = 0.9f;
 
-	leftbx = rpx + 100;
-	leftby = rpy + 300;
+	rpw = resumepanel.getWidth() * guiScale;
+	rph = resumepanel.getHeight() * guiScale;
+	rpx = (w - rpw) / 2.0f * guiScale;
+	rpy = (h - rph) / 2.0f * guiScale;
 
-	rightbx = rpx + 300;
-	rightby = rpy + 300;
+	leftbx = rpx * guiScale;
+	leftby = rpy + 300 * guiScale;
+
+	rightbx = rpx + 200 * guiScale;
+	rightby = rpy + 300 * guiScale;
 
 	scorex = (w - root->textfont.getStringWidth(gToStr(score))) / 2;
 	scorey = root->textfont.getStringHeight(gToStr(score));
@@ -816,7 +938,14 @@ void gCanvas::windowResized(int w, int h) {
 	fpscounterx = scorex + 20.0f;
 	fpscountery = scorey + 70.0f;
 
-	hitbox.set(0, 0, w, h);
+	lefthitbox.set(leftbx, leftby,
+	               leftbx + leftbw,
+	               leftby + leftbh);
+
+	righthitbox.set(rightbx, rightby,
+	                rightbx + rightbw,
+	                rightby + rightbh);
+
 }
 
 void gCanvas::showNotify() {

@@ -24,7 +24,7 @@ public:
 	void setup();
 	void update();
 
-	gFont gametitlefont, titlefont, textfont, secondtextfont, thirdtextfont;
+	gFont gametitlefont, titlefont, textfont, secondtextfont, thirdtextfont, fourthtextfont;
 
 	std::string titlekey = "Slide X", languagekey = "language", showfpskey = "showfps",
 	soundvolumekey = "soundvolume", musicvolumekey = "musicvolume", soundkey = "sound", musickey = "music",
