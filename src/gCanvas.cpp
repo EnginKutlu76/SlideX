@@ -335,6 +335,9 @@ void gCanvas::disabling() {
 
 void gCanvas::controlSetup() {
 //	player.setScale(0.1f, 0.1f, 0.1f);
+	touchStartX = 0.0f;
+	touchStartY = 0.0f;
+	swipeUsed = false;
 	player.setPosition(0, 2, 20);
 	lastplayerz = player.getPosZ();
 	speed = -0.60f;
@@ -690,52 +693,19 @@ void gCanvas::keyPressed(int key) {
 	switch(key) {
 	case G_KEY_W:
 		pressedkey = KEY_W;
-		if(isgrounded) {
-			secondjump = true;
-			velocityy = 0.30f;
-			isjumping = true;
-			jumprotation = 0.0f;
-			isgrounded = false;
-		} else if(secondjump) {
-			doublejump.play();
-			velocityy = 0.30f;
-			secondjump = false;
-		}
+		Jump();
 		break;
 	case G_KEY_S:
 		pressedkey = KEY_S;
-		pressedkey = KEY_S;
-
-		if(!isgrounded)
-		{
-		    isdownfall = true;
-		    downfallVelocity = -1.2f;
-		}
+		Downfall();
 		break;
 	case G_KEY_D:
 		pressedkey = KEY_D;
-		if(linestate == LINE_MID) {
-			linestate = LINE_RIGHT;
-			leftright.play();
-			linelocation = 3;
-		} else if (linestate == LINE_LEFT) {
-			linestate = LINE_MID;
-			leftright.play();
-			linelocation = 0;
-		}
+		MoveRight();
 		break;
-
 	case G_KEY_A:
 		pressedkey = KEY_A;
-		if(linestate == LINE_MID) {
-			linestate = LINE_LEFT;
-			leftright.play();
-			linelocation = -3;
-		} else if (linestate == LINE_RIGHT) {
-			linestate = LINE_MID;
-			leftright.play();
-			linelocation = 0;
-		}
+		MoveLeft();
 		break;
 
 	case G_KEY_ESC:
@@ -825,11 +795,27 @@ void gCanvas::mouseMoved(int x, int y) {
 }
 
 void gCanvas::mouseDragged(int x, int y, int button) {
-//	gLogi("gCanvas") << "mouseDragged" << ", x:" << x << ", y:" << y << ", b:" << button;
+
+	if(swipeUsed)
+		return;
+
+	float dx = x - touchStartX;
+	float dy = y - touchStartY;
+
+	if(std::abs(dx) >= SWIPE_THRESHOLD ||
+	   std::abs(dy) >= SWIPE_THRESHOLD)
+	{
+		HandleSwipe(dx, dy);
+		swipeUsed = true;
+	}
 }
 
 void gCanvas::mousePressed(int x, int y, int button) {
 //	gLogi("gCanvas") << "mousePressed" << ", x:" << x << ", y:" << y << ", b:" << button;
+	touchStartX = x;
+	touchStartY = y;
+	swipeUsed = false;
+
 	if(musicbuttonhitbox.contains(x, y)) {
 		musictickstate = BUTTON_PRESSED;
 	}
@@ -904,6 +890,7 @@ void gCanvas::mouseReleased(int x, int y, int button) {
 	}
 
 	if(resumepanelshown) return;
+	swipeUsed = false;
 }
 
 void gCanvas::mouseScrolled(int x, int y) {
@@ -956,3 +943,74 @@ void gCanvas::hideNotify() {
 
 }
 
+void gCanvas::MoveLeft() {
+	if(linestate == LINE_MID) {
+		linestate = LINE_LEFT;
+		linelocation = -3;
+		leftright.play();
+	}
+	else if(linestate == LINE_RIGHT) {
+		linestate = LINE_MID;
+		linelocation = 0;
+		leftright.play();
+	}
+}
+
+void gCanvas::MoveRight() {
+	if(linestate == LINE_MID) {
+		linestate = LINE_RIGHT;
+		linelocation = 3;
+		leftright.play();
+	}
+	else if(linestate == LINE_LEFT) {
+		linestate = LINE_MID;
+		linelocation = 0;
+		leftright.play();
+	}
+}
+
+void gCanvas::Jump() {
+	if(isgrounded) {
+		secondjump = true;
+		velocityy = 0.30f;
+		isjumping = true;
+		jumprotation = 0.0f;
+		isgrounded = false;
+	}
+	else if(secondjump) {
+		doublejump.play();
+		velocityy = 0.30f;
+		secondjump = false;
+	}
+}
+
+void gCanvas::Downfall() {
+	if(!isgrounded) {
+		isdownfall = true;
+		downfallVelocity = -1.2f;
+	}
+}
+
+void gCanvas::HandleSwipe(float dx, float dy) {
+	if(gamestate != GAMESTATE_PLAY)
+		return;
+
+	if(std::abs(dx) < SWIPE_THRESHOLD &&
+	   std::abs(dy) < SWIPE_THRESHOLD)
+		return;
+
+	if(std::abs(dx) > std::abs(dy)) {
+
+		if(dx > 0)
+			MoveRight();
+		else
+			MoveLeft();
+	}
+	else {
+
+		if(dy < 0)
+			Jump();
+		else
+			Downfall();
+	}
+}

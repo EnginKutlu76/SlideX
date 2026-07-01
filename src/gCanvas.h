@@ -230,6 +230,20 @@ private:
 	int buttonw, buttonh;
 
 	int continuestate, restartstate, mainmenustate;
+
+	// Swipe
+	float touchStartX;
+	float touchStartY;
+
+	bool swipeUsed;
+
+	static constexpr float SWIPE_THRESHOLD = 70.0f;
+
+	void MoveLeft();
+	void MoveRight();
+	void Jump();
+	void Downfall();
+	void HandleSwipe(float dx, float dy);
 };
 
 #endif /* GCANVAS_H_ */
