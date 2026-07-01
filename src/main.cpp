@@ -21,7 +21,7 @@
 
 int main(int argc, char **argv) {
 
-	gStartEngine(new gApp(argc, argv), "SlideX", G_WINDOWMODE_APP, 1080, 720);
+	gStartEngine(new gApp(argc, argv), "SlideX", G_WINDOWMODE_APP, 360, 540);
 
 	return 0;
 }

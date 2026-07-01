@@ -41,12 +41,14 @@ void Options::update() {
 }
 
 void Options::draw() {
-	backgroundDraw();
-	setColor(containercolor);
-	audioSettingsDraw();
-	setColor(255, 255, 255);
-	tabDraw();
-	titleDraw();
+	if(!showcontactpanel && !showcreditspanel) {
+	    backgroundDraw();
+	    setColor(containercolor);
+	    audioSettingsDraw();
+	    setColor(255, 255, 255);
+	    tabDraw();
+	    titleDraw();
+	}
 	if(showcontactpanel) {
 		contactDraw();
 	}
@@ -83,20 +85,24 @@ void Options::creditsSetup() {
 	line7 = "(c) 2026";
 
 	centerx = getScreenWidth() / 2;
-	linegap = 30;
+	linegap = 30 * scale;
 
-	starty = getHeight() / 2 - 3 * linegap;
-	tabtitle = "CREDITS";
+	starty = getHeight() / 2 - 5 * linegap;
+	creditspaneltitle = "CREDITS";
 	titley = getHeight() * 15 / 100;
 
-	crpanelw = creditspanel.getWidth();
-	crpanelh = creditspanel.getHeight();
+	scale = std::min(getWidth() / 1920.0f, getHeight() / 1080.0f);
+	scale = std::max(scale, 0.65f);
+
+	crpanelw = creditspanel.getWidth() * scale;
+	crpanelh = creditspanel.getHeight() * scale;
+
 	crpanelx = (getWidth() - crpanelw) / 2;
-	crpanely = (getHeight() - crpanelh) / 3;
+	crpanely = (getHeight() - crpanelh) / 2;
 	crexitw = crexit.getWidth();
 	crexith = crexit.getHeight();
-	crexitx = (crpanelx + crpanelw) - crexitw;
-	crexity = crpanely;
+	crexitx = crpanelx + (crpanelw - crexitw) / 2;
+	crexity = crpanely + crpanelh - crexith - 25;
 
 	crexitbutton.set(crexitx, crexity, crexitx + crexitw, crexity + crexith);
 	crexitbuttonstate = BUTTON_NONE;
@@ -115,18 +121,25 @@ void Options::creditsDraw() {
 		line1, line2, line3, line4, line5, line6, line7
 	};
 
-	for(int i = 0; i < lines.size(); i++) {
-		int w = root->secondtextfont.getStringWidth(lines[i]);
-		root->textfont.drawText(lines[i], centerx - w / 2, y);
-		y += linegap;
+	int panelCenterX = crpanelx + crpanelw / 2;
+
+	for (const auto& line : lines) {
+	    int w = root->textfont.getStringWidth(line);
+	    root->textfont.drawText(line, panelCenterX - w / 2, y + linegap + 20);
+	    y += linegap;
 	}
 
-	int titlew = root->textfont.getStringWidth(tabtitle);
-	root->titlefont.drawText(tabtitle, centerx - titlew / 1.25, titley);
+	int titlew = root->titlefont.getStringWidth(creditspaneltitle);
+
+	float titleX = crpanelx + (crpanelw - titlew) / 2;
+	float titleY = crpanely + 40;
+
+	root->titlefont.drawText(creditspaneltitle, titleX, titleY);
 }
 
 void Options::contactSetup() {
 	contactlines.clear();
+	contactpaneltitle = "CONTACT";
 	contactpanel.loadImage("Interface/Card X2/Card X3.png");
 	coexit.loadImage("Interface/Icons/03.png");
 	contactlines.push_back("E-Mail: contact@yourmail.com");
@@ -137,14 +150,18 @@ void Options::contactSetup() {
 
 	contactlineh = root->secondtextfont.getStringHeight("y");
 
-	copanelw = contactpanel.getWidth();
-	copanelh = contactpanel.getHeight();
+	scale = std::min(getWidth() / 1920.0f, getHeight() / 1080.0f);
+	scale = std::max(scale, 0.65f);
+
+	copanelw = contactpanel.getWidth() * scale;
+	copanelh = contactpanel.getHeight() * scale;
+
 	copanelx = (getWidth() - copanelw) / 2;
-	copanely = (getHeight() - copanelh) / 3;
+	copanely = (getHeight() - copanelh) / 2;
 	coexitw = coexit.getWidth();
 	coexith = coexit.getHeight();
-	coexitx = (copanelx + copanelw) - coexitw;
-	coexity = copanely;
+	coexitx = copanelx + (copanelw - coexitw) / 2;
+	coexity = copanely + copanelh - coexith - 25;
 
 	contactw = root->secondtextfont.getStringWidth(contacttext);
 	contacth = root->secondtextfont.getStringHeight(contacttext);
@@ -152,7 +169,7 @@ void Options::contactSetup() {
 	contactx = contactbuttonx + (buttonw - contactw) / 2;
 	contacty = contactbuttony + (buttonh + contacth) / 2;
 
-	contactx = containerx + containerw * 0.11f;
+	contactx = copanelx + contactw / 4;
 	contacty = containery + containerh * 0.18f;
 
 	coexitbutton.set(coexitx, coexity, coexitx + coexitw, coexity + coexith);
@@ -169,9 +186,16 @@ void Options::contactDraw() {
 	setColor(255, 255, 255);
 
 	for(const auto& line : contactlines) {
-		root->textfont.drawText(line, contactx, y);
-		y += contactlineh + 30.0f;
+		root->textfont.drawText(line, contactx, y + 100);
+		y += linegap;
 	}
+
+	int titlew = root->titlefont.getStringWidth(contactpaneltitle);
+
+	float titleX = copanelx + (copanelw - titlew) / 2;
+	float titleY = copanely + 40;
+
+	root->titlefont.drawText(contactpaneltitle, titleX, titleY);
 }
 
 void Options::updateScale() {
@@ -194,9 +218,14 @@ void Options::charPressed(unsigned int codepoint) {
 }
 
 void Options::mouseMoved(int x, int y) {
-	//	gLogi("Options") << "mouseMoved" << ", x:" << x << ", y:" << y;
-	tabButtonFocus(x, y);
-	containerButtonFocus(x, y);
+
+    if(showcontactpanel || showcreditspanel) {
+        tabButtonFocus(x, y); // Sadece exit hover
+        return;
+    }
+
+    tabButtonFocus(x, y);
+    containerButtonFocus(x, y);
 }
 
 void Options::mouseDragged(int x, int y, int button) {
@@ -204,15 +233,25 @@ void Options::mouseDragged(int x, int y, int button) {
 }
 
 void Options::mousePressed(int x, int y, int button) {
-	//	gLogi("Options") << "mousePressed" << ", x:" << x << ", y:" << y << ", b:" << button;
-	tabButtonPressed(x, y);
-	containerButtonPressed(x, y);
+
+    if(showcontactpanel || showcreditspanel) {
+        tabButtonPressed(x, y); // Sadece exit butonu çalýþsýn
+        return;
+    }
+
+    tabButtonPressed(x, y);
+    containerButtonPressed(x, y);
 }
 
 void Options::mouseReleased(int x, int y, int button) {
-	//	gLogi("Options") << "mouseReleased" << ", button:" << button;
-	tabButtonReleased(x, y);
-	containerButtonReleased(x, y);
+
+    if(showcontactpanel || showcreditspanel) {
+        tabButtonReleased(x, y); // Sadece exit butonu çalýþsýn
+        return;
+    }
+
+    tabButtonReleased(x, y);
+    containerButtonReleased(x, y);
 }
 
 void Options::mouseScrolled(int x, int y) {
@@ -228,6 +267,9 @@ void Options::mouseExited() {
 }
 
 void Options::windowResized(int w, int h) {
+	fxtickSetup();
+	musictickSetup();
+
 	backgroundSetup();
 	containerSetup();
 	tabSetup();
@@ -266,6 +308,17 @@ void Options::tabDraw() {
 }
 
 void Options::tabButtonPressed(int x, int y) {
+	if(showcontactpanel) {
+	    if(coexitbutton.contains(x, y))
+	        coexitbuttonstate = BUTTON_PRESSED;
+	    return;
+	}
+
+	if(showcreditspanel) {
+	    if(crexitbutton.contains(x, y))
+	        crexitbuttonstate = BUTTON_PRESSED;
+	    return;
+	}
 	if(returnhitbox.contains(x, y)) {
 		returnbuttonstate = BUTTON_PRESSED;
 	}
@@ -285,35 +338,31 @@ void Options::tabButtonPressed(int x, int y) {
 }
 
 void Options::tabButtonReleased(int x, int y) {
-	if(returnhitbox.contains(x, y) && returnbuttonstate == BUTTON_PRESSED) {
+	if(returnhitbox.contains(x, y) && returnbuttonstate == BUTTON_PRESSED && showcontactpanel == false && showcreditspanel == false) {
 		returnbuttonstate = BUTTON_PERFORMED;
 		buttonsound.play();
 		root->setCurrentCanvas(new MainMenuCanvas(root));
 		return;
 	}
-	if(contactbutton.contains(x, y) && contactbuttonstate == BUTTON_PRESSED) {
+	if(contactbutton.contains(x, y) && contactbuttonstate == BUTTON_PRESSED && showcreditspanel == false) {
 		contactbuttonstate = BUTTON_PERFORMED;
 		buttonsound.play();
 		showcontactpanel = true;
-		showcreditspanel = false;
 		return;
 	}
-	if(creditsbutton.contains(x, y) && creditsbuttonstate == BUTTON_PRESSED) {
+	if(creditsbutton.contains(x, y) && creditsbuttonstate == BUTTON_PRESSED && showcontactpanel == false) {
 		creditsbuttonstate = BUTTON_PERFORMED;
 		buttonsound.play();
 		showcreditspanel = true;
-		showcontactpanel = false;
 		return;
 	}
 	if(showcreditspanel && crexitbutton.contains(x, y) && crexitbuttonstate == BUTTON_PRESSED) {
-		gLogi("Options") << "Credits Kapatildi";
 		crexitbuttonstate = BUTTON_PERFORMED;
 		buttonsound.play();
 		showcreditspanel = false;
 		return;
 	}
 	if(showcontactpanel && coexitbutton.contains(x, y) && coexitbuttonstate == BUTTON_PRESSED) {
-		gLogi("Options") << "Contact Kapatildi";
 		coexitbuttonstate = BUTTON_PERFORMED;
 		buttonsound.play();
 		showcontactpanel = false;
@@ -566,11 +615,11 @@ void Options::musictickSetup() {
 	musiccheck.loadImage("Interface/Icons/30.png");
 	musictextw = root->secondtextfont.getStringWidth(musictext);
 	musictexth = root->secondtextfont.getStringHeight(musictext);
-	musictextx = containerx + (containerw * 0.20);
+	musictextx = containerx + (containerw * 0.15);
 	musictexty = containery + containerh * 0.25f;
 	musicuncheckw = musicuncheck.getWidth() * 0.08;
 	musicuncheckh = musicuncheck.getHeight() * 0.08;
-	musicuncheckx = containerx + (containerw * 0.55);
+	musicuncheckx = musictextx + musictextw + musicuncheckw;
 	musicunchecky = musictexty - (musictexth / 2) - (musicuncheckh / 2) + 3;
 	musiccheckw = musiccheck.getWidth();
 	musiccheckh = musiccheck.getHeight();
@@ -584,11 +633,11 @@ void Options::fxtickSetup() {
 	fxcheck.loadImage("Interface/Icons/30.png");
 	fxtextw = root->secondtextfont.getStringWidth(fxtext);
 	fxtexth = root->secondtextfont.getStringHeight(fxtext);
-	fxtextx = containerx + (containerw * 0.20);
+	fxtextx = containerx + (containerw * 0.15);
 	fxtexty = musictexty + (containerh / 10);
 	fxuncheckw = fxuncheck.getWidth() * 0.08;
 	fxuncheckh = fxuncheck.getHeight() * 0.08;
-	fxuncheckx = containerx + (containerw * 0.55);
+	fxuncheckx = fxtextx + fxtextw + fxuncheckw;
 	fxunchecky = fxtexty - (fxtexth / 2) - (fxuncheckh / 2) + 3;
 	fxcheckw = fxcheck.getWidth();
 	fxcheckh = fxcheck.getHeight();

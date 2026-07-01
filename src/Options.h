@@ -146,7 +146,7 @@ private:
 	gImage returnnormal;
 
 	//titles
-	std::string tabtitle;
+	std::string creditspaneltitle, contactpaneltitle;
 	int tabtextx, tabtexty, tabtextw, tabtexth;
 	std::string sectiontitle;
 	int titlex, titley, titlew, titleh;
@@ -197,6 +197,8 @@ private:
 	int crpanelx, crpanely, crpanelw, crpanelh;
 	int crexitx, crexity, crexitw, crexith;
 	bool showcreditspanel = false;
+
+	float scale;
 };
 
 #endif /* SRC_OPTIONS_H_ */
