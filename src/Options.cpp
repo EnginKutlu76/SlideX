@@ -452,72 +452,90 @@ void Options::returnDraw() {
 }
 
 void Options::contactTabButtonSetup() {
-	contactbuttonactive.loadImage("Interface/Button 1/Button Active.png");
-	contactbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
-	contactbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+    contactbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+    contactbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+    contactbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
 
     buttonw = contactbuttonactive.getWidth() * 1.30f;
     buttonh = contactbuttonactive.getHeight() * 1.30f;
 
-    contactbuttonx = containerx + (containerw * 0.20);
-    contactbuttony = containery + 250;
+    buttonspacing = 25;
 
-	contacttext = "Contact";
-	contactbuttonstate = BUTTON_NONE;
-	contacttabbuttonh = tabh;
-	contacttabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	contacttabbuttonx = contactbuttonx + (buttonw - contacttabbuttonw) / 2;
-	contacttabbuttony = contactbuttony + (buttonh + contacttabbuttonh) / 2;
-	contactbutton.set(contactbuttonx, contactbuttony, contactbuttonx + buttonw, contactbuttony + buttonh);
+    contactbuttonx = containerx + (containerw - buttonw) / 2;
+    contactbuttony = containery + containerh * 0.58f;
+
+    contacttext = "Contact";
+
+    contactbutton.set(
+        contactbuttonx,
+        contactbuttony,
+        contactbuttonx + buttonw,
+        contactbuttony + buttonh
+    );
+
+    contactbuttonstate = BUTTON_NONE;
 }
 
 void Options::creditsTabButtonSetup() {
-	creditsbuttonactive.loadImage("Interface/Button 1/Button Active.png");
-	creditsbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
-	creditsbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
+    creditsbuttonactive.loadImage("Interface/Button 1/Button Active.png");
+    creditsbuttonhover.loadImage("Interface/Button 1/Button Hover.png");
+    creditsbuttonnormal.loadImage("Interface/Button 1/Button Normal.png");
 
-	creditsbuttonx = containerx + (containerw * 0.20);
-    creditsbuttony = containery + 250;
+    creditsbuttonx = contactbuttonx;
 
-	creditstext = "Credits";
-	creditsbuttonstate = BUTTON_NONE;
-	creditstabbuttonh = tabh;
-	creditstabbuttonw = (tabw - (tabw * 0.08)) / 2;
-	creditstabbuttonx = containerx + (containerw * 0.20);
-	creditstabbuttony = contacttabbuttony + 75;
-	creditsbutton.set(creditstabbuttonx, creditstabbuttony, creditstabbuttonx + creditstabbuttonw, creditstabbuttony + creditstabbuttonh);
+    creditsbuttony =
+        contactbuttony +
+        buttonh +
+        buttonspacing;
+
+    creditstext = "Credits";
+
+    creditsbutton.set(
+        creditsbuttonx,
+        creditsbuttony,
+        creditsbuttonx + buttonw,
+        creditsbuttony + buttonh
+    );
+
+    creditsbuttonstate = BUTTON_NONE;
 }
 
 void Options::contactTabButtonDraw() {
+    if(contactbuttonstate == BUTTON_FOCUS)
+        contactbuttonhover.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
+    else if(contactbuttonstate == BUTTON_PRESSED ||
+            contactbuttonstate == BUTTON_PERFORMED)
+        contactbuttonactive.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
+    else
+        contactbuttonnormal.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
+
+    int textW = root->thirdtextfont.getStringWidth(contacttext);
+    int textH = root->thirdtextfont.getStringHeight(contacttext);
+
+    int textX = contactbuttonx + (buttonw - textW) / 2;
+    int textY = contactbuttony + (buttonh + textH) / 2;
+
 	setColor(255, 255, 255);
-	if(contactbuttonstate == BUTTON_FOCUS) contactbuttonhover.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
-	if(contactbuttonstate == BUTTON_PRESSED || contactbuttonstate == BUTTON_PERFORMED || activetab == TAB_CONTACT) contactbuttonactive.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
-	else contactbuttonnormal.draw(contactbuttonx, contactbuttony, buttonw, buttonh);
-
-	tabfontw = root->thirdtextfont.getStringWidth(contacttext);
-	tabfonth = root->thirdtextfont.getStringHeight(contacttext);
-
-	tabfontx = contacttabbuttonx + (contacttabbuttonw - tabfontw) / 2;
-	tabfonty = contacttabbuttony + (contacttabbuttonh + tabfonth) / 2;
-
-	setColor(255, 255, 255);
-	root->thirdtextfont.drawText(contacttext, tabfontx, tabfonty - 100);
-	//root->thirdtextfont.drawText(contacttext, contactbuttonx, contactbuttony);
-	setColor(normalcolor);
+    root->thirdtextfont.drawText(contacttext, textX, textY);
 }
 
 void Options::creditsTabButtonDraw() {
-	if(creditsbuttonstate == BUTTON_FOCUS) creditsbuttonhover.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
-	if(creditsbuttonstate == BUTTON_PRESSED || creditsbuttonstate == BUTTON_PERFORMED || activetab == TAB_CREDITS) creditsbuttonactive.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
-	else creditsbuttonnormal.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
-	creditsimg.draw(creditstabbuttonx, creditstabbuttony, creditstabbuttonw, creditstabbuttonh);
-	tabfontw = root->secondtextfont.getStringWidth(creditstext);
-	tabfonth = root->secondtextfont.getStringHeight(creditstext);
-	tabfontx = creditstabbuttonx + (creditstabbuttonw - tabfontw) / 2;
-	tabfonty = creditstabbuttony + (creditstabbuttonh + tabfonth) / 2;
+    if(creditsbuttonstate == BUTTON_FOCUS)
+        creditsbuttonhover.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
+    else if(creditsbuttonstate == BUTTON_PRESSED ||
+            creditsbuttonstate == BUTTON_PERFORMED)
+        creditsbuttonactive.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
+    else
+        creditsbuttonnormal.draw(creditsbuttonx, creditsbuttony, buttonw, buttonh);
+
+    int textW = root->thirdtextfont.getStringWidth(creditstext);
+    int textH = root->thirdtextfont.getStringHeight(creditstext);
+
+    int textX = creditsbuttonx + (buttonw - textW) / 2;
+    int textY = creditsbuttony + (buttonh + textH) / 2;
+
 	setColor(255, 255, 255);
-	root->thirdtextfont.drawText(creditstext, tabfontx, tabfonty);
-	setColor(normalcolor);
+    root->thirdtextfont.drawText(creditstext, textX, textY);
 }
 
 void Options::musictickSetup() {

@@ -62,8 +62,6 @@ private:
 	void containerButtonFocus(int x, int y);
 
 	//audio funcs
-	void audioTabButtonSetup();
-	void audioTabButtonDraw();
 	void audioSettingsSetup();
 	void musictickSetup();
 	void fxtickSetup();
@@ -101,15 +99,13 @@ private:
 	void titleDraw();
 
 	//tabs
-	gRect gametabbutton, graphicstabbutton, audiotabbutton, contactbutton, creditsbutton;
-	std::string gametabtext, graphicstabtext, audiotabtext, contacttext, creditstext;
-	int gametabbuttonstate, graphicstabbuttonstate, audiotabbuttonstate, contactbuttonstate, creditsbuttonstate;
+	gRect audiotabbutton, contactbutton, creditsbutton;
+	std::string audiotabtext, contacttext, creditstext;
+	int audiotabbuttonstate, contactbuttonstate, creditsbuttonstate;
 
 	int gametabbuttonx, gametabbuttony, gametabbuttonw, gametabbuttonh;
 	int graphicstabbuttonx, graphicstabbuttony, graphicstabbuttonw, graphicstabbuttonh;
 	int audiotabbuttonx, audiotabbuttony, audiotabbuttonw, audiotabbuttonh;
-	int contacttabbuttonx, contacttabbuttony, contacttabbuttonw, contacttabbuttonh;
-	int creditstabbuttonx, creditstabbuttony, creditstabbuttonw, creditstabbuttonh;
 	int tabfontx, tabfonty, tabfontw, tabfonth;
 	int tabx, taby, tabw, tabh;
 
@@ -162,7 +158,20 @@ private:
 	gImage applyimg;
 	gImage resetimg;
 
+	std::string line1, line2, line3, line4, line5, line6, line7;
+	int centerx, starty, linegap;
 
+	gSound buttonsound, optionsound;
+
+	//bg
+	gImage background;
+	int bgx, bgy, bgw, bgh;
+
+	int buttonw, buttonh;
+	int buttonspacing;
+
+	gImage contactbuttonactive, contactbuttonhover, contactbuttonnormal;
+	int contactbuttonx, contactbuttony;
 	gImage contactimg;
 	gImage contactpanel;
 	gImage coexit;
@@ -175,6 +184,8 @@ private:
 	float contactx, contacty, contactw, contacth;
 	bool showcontactpanel = false;
 
+	gImage creditsbuttonactive, creditsbuttonhover, creditsbuttonnormal;
+	int creditsbuttonx, creditsbuttony;
 	gImage creditsimg;
 	gImage creditspanel;
 	gImage crexit;
@@ -183,21 +194,6 @@ private:
 	int crpanelx, crpanely, crpanelw, crpanelh;
 	int crexitx, crexity, crexitw, crexith;
 	bool showcreditspanel = false;
-
-	std::string line1, line2, line3, line4, line5, line6, line7;
-	int centerx, starty, linegap;
-
-	gSound buttonsound, optionsound;
-
-	//bg
-	gImage background;
-	int bgx, bgy, bgw, bgh;
-
-	gImage contactbuttonactive, contactbuttonhover, contactbuttonnormal;
-	gImage creditsbuttonactive, creditsbuttonhover, creditsbuttonnormal;
-	int contactbuttonx, contactbuttony;
-	int creditsbuttonx, creditsbuttony;
-	int buttonw, buttonh;
 };
 
 #endif /* SRC_OPTIONS_H_ */
