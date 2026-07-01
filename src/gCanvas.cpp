@@ -196,36 +196,36 @@ void gCanvas::applyAudioSettings() {
 
 void gCanvas::musictickSetup() {
 	musictext = "Music";
-	musicuncheck.loadImage("UIasset/PNG/button02.png");
-	musiccheck.loadImage("check-markred.png");
+	musicuncheck.loadImage("Interface/Card X2/Card X3.png");
+	musiccheck.loadImage("Interface/Icons/30.png");
 	musictextw = root->secondtextfont.getStringWidth(musictext);
 	musictexth = root->secondtextfont.getStringHeight(musictext);
 	musictextx = rpx + (resumepanel.getWidth() * 0.10);
-	musictexty = rpy + resumepanel.getHeight() / 1.5;
-	musicuncheckw = musicuncheck.getWidth() * 0.5;
-	musicuncheckh = musicuncheck.getHeight() * 0.5;
+	musictexty = rpy + resumepanel.getHeight() / 2;
+	musicuncheckw = musicuncheck.getWidth() * 0.08;
+	musicuncheckh = musicuncheck.getHeight() * 0.08;
 	musicuncheckx = rpx + (musictextw * 2);
 	musicunchecky = musictexty - (musictexth / 2) - (musicuncheckh / 2) + 3;
-	musiccheckw = musiccheck.getWidth() * 0.06;
-	musiccheckh = musiccheck.getHeight() * 0.06;
+	musiccheckw = musiccheck.getWidth();
+	musiccheckh = musiccheck.getHeight();
 	musicbuttonhitbox.set(musicuncheckx, musicunchecky, musicuncheckx + musicuncheckw, musicunchecky + musicuncheckh);
 	ismusicenabled = root->getMusic();
 }
 
 void gCanvas::fxtickSetup() {
 	fxtext = "FX Sound";
-	fxuncheck.loadImage("UIasset/PNG/button02.png");
-	fxcheck.loadImage("check-markred.png");
+	fxuncheck.loadImage("Interface/Card X2/Card X3.png");
+	fxcheck.loadImage("Interface/Icons/30.png");
 	fxtextw = root->secondtextfont.getStringWidth(fxtext);
 	fxtexth = root->secondtextfont.getStringHeight(fxtext);
 	fxtextx = rpx + (resumepanel.getWidth() * 0.10);
 	fxtexty = musictexty + (resumepanel.getHeight() / 8);
-	fxuncheckw = fxuncheck.getWidth() * 0.5;
-	fxuncheckh = fxuncheck.getHeight() * 0.5;
+	fxuncheckw = fxuncheck.getWidth() * 0.08;
+	fxuncheckh = fxuncheck.getHeight() * 0.08;
 	fxuncheckx = rpx + (fxtextw * 1.5);
 	fxunchecky = fxtexty - (fxtexth / 2) - (fxuncheckh / 2) + 3;
-	fxcheckw = fxcheck.getWidth() * 0.06;
-	fxcheckh = fxcheck.getHeight() * 0.06;
+	fxcheckw = fxcheck.getWidth();
+	fxcheckh = fxcheck.getHeight();
 	fxbuttonhitbox.set(fxuncheckx, fxunchecky, fxuncheckx + fxuncheckw, fxunchecky + fxuncheckh);
 	isfxenabled = root->getSound();
 }
@@ -463,11 +463,11 @@ void gCanvas::scoreDraw() {
 }
 
 void gCanvas::guiSetup() {
-	resumepanel.loadImage("dialogue_pause.png");
-	overpanel.loadImage("dialogue_gameover.png");
-	mainmbutton.loadImage("button_mainmenu.png");
-	continuebutton.loadImage("button_continue.png");
-	restartbutton.loadImage("button_replay.png");
+	resumepanel.loadImage("Interface/Card X2/Card X3.png");
+	overpanel.loadImage("Interface/Card X2/Card X3.png");
+	mainmbutton.loadImage("Interface/Button 1/Button Normal.png");
+	continuebutton.loadImage("Interface/Button 1/Button Normal.png");
+	restartbutton.loadImage("Interface/Button 1/Button Normal.png");
 
 	rpw = resumepanel.getWidth();
 	rph = resumepanel.getHeight();

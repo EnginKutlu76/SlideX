@@ -215,6 +215,14 @@ private:
 	bool isfxenabled;
 
 	gSkybox sky;
+
+	gImage restartbuttonactive, restartbuttonhover, restartbuttonnormal;
+	gImage mainmenubuttonactive, mainmenubuttonhover, mainmenubuttonnormal;
+	gImage continuebuttonactive, continuebuttonhover, continuebuttonnormal;
+	int restartbuttonx, restartbuttony;
+	int mainmenubuttonx, mainmenubuttony;
+	int continuebuttonx, continuebuttony;
+	int buttonw, buttonh;
 };
 
 #endif /* GCANVAS_H_ */
