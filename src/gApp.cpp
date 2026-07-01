@@ -34,7 +34,7 @@ int safeGetInt(std::string data) {
 void gApp::loadAssets() {
 	titlefont.loadFont("neon_zone/Neon Zone.ttf", 30);
 	gametitlefont.loadFont("neon_zone/Neon Zone.ttf", 50);
-	textfont.loadFont("neon_zone/Neon Zone.ttf", 18);
+	textfont.loadFont("StrongStitch-Regular.otf", 12);
 	secondtextfont.loadFont("StrongStitch-Regular.otf", 20);
 	thirdtextfont.loadFont("neon_zone/Neon Zone.ttf", 19);
 

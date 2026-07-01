@@ -89,12 +89,12 @@ void Options::creditsSetup() {
 	tabtitle = "CREDITS";
 	titley = getHeight() * 15 / 100;
 
-	crpanelw = creditspanel.getWidth() * 2.4f;
-	crpanelh = creditspanel.getHeight() * 2.4f;
+	crpanelw = creditspanel.getWidth();
+	crpanelh = creditspanel.getHeight();
 	crpanelx = (getWidth() - crpanelw) / 2;
 	crpanely = (getHeight() - crpanelh) / 3;
-	crexitw = crexit.getWidth() * 0.10;
-	crexith = crexit.getHeight() * 0.10;
+	crexitw = crexit.getWidth();
+	crexith = crexit.getHeight();
 	crexitx = (crpanelx + crpanelw) - crexitw;
 	crexity = crpanely;
 
@@ -117,7 +117,7 @@ void Options::creditsDraw() {
 
 	for(int i = 0; i < lines.size(); i++) {
 		int w = root->secondtextfont.getStringWidth(lines[i]);
-		root->secondtextfont.drawText(lines[i], centerx - w / 2, y);
+		root->textfont.drawText(lines[i], centerx - w / 2, y);
 		y += linegap;
 	}
 
@@ -137,12 +137,12 @@ void Options::contactSetup() {
 
 	contactlineh = root->secondtextfont.getStringHeight("y");
 
-	copanelw = contactpanel.getWidth() * 2.4f;
-	copanelh = contactpanel.getHeight() * 2.4f;
+	copanelw = contactpanel.getWidth();
+	copanelh = contactpanel.getHeight();
 	copanelx = (getWidth() - copanelw) / 2;
 	copanely = (getHeight() - copanelh) / 3;
-	coexitw = coexit.getWidth() * 0.10;
-	coexith = coexit.getHeight() * 0.10;
+	coexitw = coexit.getWidth();
+	coexith = coexit.getHeight();
 	coexitx = (copanelx + copanelw) - coexitw;
 	coexity = copanely;
 
@@ -152,7 +152,7 @@ void Options::contactSetup() {
 	contactx = contactbuttonx + (buttonw - contactw) / 2;
 	contacty = contactbuttony + (buttonh + contacth) / 2;
 
-	contactx = containerx + containerw * 0.01f;
+	contactx = containerx + containerw * 0.11f;
 	contacty = containery + containerh * 0.18f;
 
 	coexitbutton.set(coexitx, coexity, coexitx + coexitw, coexity + coexith);
@@ -169,7 +169,7 @@ void Options::contactDraw() {
 	setColor(255, 255, 255);
 
 	for(const auto& line : contactlines) {
-		root->secondtextfont.drawText(line, contactx, y);
+		root->textfont.drawText(line, contactx, y);
 		y += contactlineh + 30.0f;
 	}
 }
@@ -562,36 +562,36 @@ void Options::creditsTabButtonDraw() {
 
 void Options::musictickSetup() {
 	musictext = "Music";
-	musicuncheck.loadImage("inactivecolor.png");
+	musicuncheck.loadImage("Interface/Card X2/Card X3.png");
 	musiccheck.loadImage("Interface/Icons/30.png");
 	musictextw = root->secondtextfont.getStringWidth(musictext);
 	musictexth = root->secondtextfont.getStringHeight(musictext);
 	musictextx = containerx + (containerw * 0.20);
 	musictexty = containery + containerh * 0.25f;
-	musicuncheckw = musicuncheck.getWidth() * 0.5;
-	musicuncheckh = musicuncheck.getHeight() * 0.5;
+	musicuncheckw = musicuncheck.getWidth() * 0.08;
+	musicuncheckh = musicuncheck.getHeight() * 0.08;
 	musicuncheckx = containerx + (containerw * 0.55);
 	musicunchecky = musictexty - (musictexth / 2) - (musicuncheckh / 2) + 3;
-	musiccheckw = musiccheck.getWidth() * 0.06;
-	musiccheckh = musiccheck.getHeight() * 0.06;
+	musiccheckw = musiccheck.getWidth();
+	musiccheckh = musiccheck.getHeight();
 	musicbuttonhitbox.set(musicuncheckx, musicunchecky, musicuncheckx + musicuncheckw, musicunchecky + musicuncheckh);
 	ismusicenabled = root->getMusic();
 }
 
 void Options::fxtickSetup() {
 	fxtext = "FX Sound";
-	fxuncheck.loadImage("inactivecolor.png");
+	fxuncheck.loadImage("Interface/Card X2/Card X3.png");
 	fxcheck.loadImage("Interface/Icons/30.png");
 	fxtextw = root->secondtextfont.getStringWidth(fxtext);
 	fxtexth = root->secondtextfont.getStringHeight(fxtext);
 	fxtextx = containerx + (containerw * 0.20);
 	fxtexty = musictexty + (containerh / 10);
-	fxuncheckw = fxuncheck.getWidth() * 0.5;
-	fxuncheckh = fxuncheck.getHeight() * 0.5;
+	fxuncheckw = fxuncheck.getWidth() * 0.08;
+	fxuncheckh = fxuncheck.getHeight() * 0.08;
 	fxuncheckx = containerx + (containerw * 0.55);
 	fxunchecky = fxtexty - (fxtexth / 2) - (fxuncheckh / 2) + 3;
-	fxcheckw = fxcheck.getWidth() * 0.06;
-	fxcheckh = fxcheck.getHeight() * 0.06;
+	fxcheckw = fxcheck.getWidth();
+	fxcheckh = fxcheck.getHeight();
 	fxbuttonhitbox.set(fxuncheckx, fxunchecky, fxuncheckx + fxuncheckw, fxunchecky + fxuncheckh);
 	isfxenabled = root->getSound();
 }
